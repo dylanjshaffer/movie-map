@@ -18,12 +18,39 @@
 </head>
 <body>
 
-  <h1 class="jumbotron">Movie Map</h1>
-  <!-- TODO NAVBAR-->
+  <header>
+    <div class="row">
+      <div class="col-sm-4">
+        <h1>onLocation</h1>
+        <h5>A thing that does stuff</h5>
+      </div>
+
+      <div class="col-sm-4">
+
+        <form id="search">
+          <input type="text" id="search-term" placeholder="Search by..."/>
+          <input type="radio" name="search-by" id="movie" value="movie"/>
+          <label for="movie">Movie</label>
+          <input type="radio" name="search-by" id="location" value="location"/>
+          <label for="location">Location</label>
+        </form>
+      </div>
+
+      <div class="col-sm-4">
+        <form id="genre-selector">
+          <select id="genre">
+            <option value="standard" selected>Choose Map Genre</option>
+            <option value="scifi">Sci-Fi</option>
+            <option value="western">Western</option>
+          </select>
+        </form>
+      </div>
+    </div>
+
+  </header>
 
   <main>
     <section>
-      <!-- TODO Map search, map -->
       <div id="map"></div>
 
     </section>
@@ -32,7 +59,7 @@
 
   <!-- script -->
   <script src="js/moviemap.js"></script>
-  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBH1GdmBFyhL3U_AqZLzMk_iQl5NXuU-Mc&callback=initMap">
+  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBH1GdmBFyhL3U_AqZLzMk_iQl5NXuU-Mc&callback=initMap">
   </script>
 </body>
 </html>
