@@ -28,11 +28,12 @@
       <div class="col-sm-4">
 
         <form id="search">
-          <input type="text" id="search-term" placeholder="Search by..."/>
-          <input type="radio" name="search-by" id="movie" value="movie"/>
-          <label for="movie">Movie</label>
-          <input type="radio" name="search-by" id="location" value="location"/>
-          <label for="location">Location</label>
+          <input type="text" id="search-term" placeholder=""/>
+          <select id="search-param">
+            <option value="" disabled selected>Search by...</option>
+            <option value="title-search">Movie Title</option>
+            <option value="location-search">Location</option>
+          </select>
         </form>
       </div>
 
@@ -59,7 +60,7 @@
 
   <!-- script -->
   <script src="js/moviemap.js"></script>
-  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBH1GdmBFyhL3U_AqZLzMk_iQl5NXuU-Mc&callback=initMap">
+  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBH1GdmBFyhL3U_AqZLzMk_iQl5NXuU-Mc&callback=initMap&libraries=places">
   </script>
 </body>
 </html>
