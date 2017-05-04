@@ -51,6 +51,12 @@ function goToCoordinates(location) {
   });
 }
 
+function addMarker(latLng, map) {
+  var marker = new google.maps.Marker({
+    position: latLng,
+    map: map
+  });
+}
 
 function changeCenter(center) {
   map.setCenter(center);
