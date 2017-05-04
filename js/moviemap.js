@@ -1,18 +1,30 @@
-// API Information
-
-var tmdbApi = {
-  // TODO add complete url
-  root: "https://api.themoviedb.org/3",
-  token: "24758e2d6d872edf774b8e3777b4d0de",
-
-  posterUrl: function(movie) {
-    var baseImageUrl =
-    "http://image.tmdb.org/t/p/w300/";
-    return baseImageUrl + movie.poster_path;
-  }
-};
 
 // MODEL & HELPERS
+
+var model = {
+  titleResults: [],
+};
+
+var posterUrl = function(movie) {
+  var baseImageUrl =
+  "http://image.tmdb.org/t/p/w300/";
+  return baseImageUrl + movie.poster_path;
+};
+
+function fetchMovieInfo(title) {
+
+  $.ajax({
+    url: "https://api.themoviedb.org/3/search/movie",
+    data: {
+      api_key: "24758e2d6d872edf774b8e3777b4d0de",
+      query: title
+    },
+    success: function(response) {
+      model.titleResults = response.results;
+      console.log(model.titleResults);
+    }
+  })
+}
 
 
 function goToCoordinates(location) {
@@ -67,7 +79,7 @@ function initMap() {
 }
 
 
-// Search Functionality
+// DOM Event Handlers
 
 $("#search-param").change(function () {
   $("#search-term").attr("placeholder", ($(this).val() == "title-search") ? "Enter movie title" : "Enter location")
@@ -77,7 +89,8 @@ $("#search").submit(function(evt) {
   evt.preventDefault();
   var searchTerm = $("#search-term").val();
   if ($("#search-param").val() == "title-search") {
-
+    // TODO write this function
+    displayTitleLocations(searchTerm);
     // TODO search myAPIfilms with searchTerm as title
 
     console.log(searchTerm + " is a title");
