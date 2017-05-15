@@ -2,9 +2,10 @@
 // MODEL & HELPERS
 
 var model = {
-  map: document.getElementById("gmap3"),
+  map: document.getElementById("#gmap3"),
   windows: [],
   // windows: ["1", "2", "3", "4"],
+  searchTerm: "",
   currentTitles: [],
   currentID: [],
   currentLocation: "Chicago",
@@ -37,14 +38,14 @@ function markerLocations() {
   };
 };
 
-function fetchMovie(callback, title) {
-  // model.currentTitles = [];
-  // model.windows = [];
+function fetchMovie(callback) {
+  model.currentTitles = [];
+  model.windows = [];
   $.ajax({
     url: tmdbApi.root + "/search/movie",
     data: {
       api_key: tmdbApi.token,
-      query: title,
+      query: model.searchTerm,
       include_adult: false
     },
     success: function(response) {
@@ -79,7 +80,7 @@ function fetchMovie(callback, title) {
 
       });
       console.log(model.windows)
-      callback();
+      callback;
     }
   });
 };
@@ -137,6 +138,7 @@ function render() {
 
   model.currentLocations = [];
 
+
   markerLocations();
 
   $("#test-space").append(model.windows);
@@ -177,19 +179,21 @@ function render() {
         });
       });
     });
+  search();
 };
 
+function search() {
+  model.searchTerm = "";
 
-function search(callback) {
-  var searchTerm = "";
+
   $("#search-param").change(function () {
     $("#search-term").attr("placeholder", ($(this).val() == "title-search") ? "Enter movie title" : "Enter location")
   });
   $("#search").submit(function(evt) {
     evt.preventDefault();
-    searchTerm = $("#search-term").val();
+    model.searchTerm = $("#search-term").val();
     if ($("#search-param").val() == "title-search") {
-      fetchMovie(callback, searchTerm);
+      fetchMovie(render);
 
 
       // TODO write this function
@@ -206,9 +210,8 @@ function search(callback) {
       console.log("error");
     }
   });
-  callback();
 };
 
 $("document").ready(function(){
-  search(render);
+  render();
 });
