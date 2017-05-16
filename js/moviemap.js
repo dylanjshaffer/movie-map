@@ -20,9 +20,10 @@ var tmdbApi = {
 
   posterUrl: function(movie) {
     var baseImageUrl = "http://image.tmdb.org/t/p/w300/";
+    console.log(baseImageUrl + movie.poster_path);
     return baseImageUrl + movie.poster_path;
   }
-}
+};
 
 function markerLocations() {
   var positions = [
@@ -58,10 +59,16 @@ function fetchMovie(callback) {
 
         var year = $("<h6></h6>").text(movie.release_date.slice(0, 4));
 
-        // TODO fix this
-        // var poster = $("<img></img>")
-        //   .attr("src", tmdbApi.posterUrl(movie))
-        //   .attr("class", "img-responsive");
+        var poster;
+        if (movie.poster_path != null) {
+          poster = $("<img></img>")
+            .attr("src", tmdbApi.posterUrl(movie))
+            .attr("class", "img-responsive")
+            .attr("width", "50%");
+          console.log(tmdbApi.posterUrl(movie));
+        } else {
+          poster = $("<p>No poster to display</p>");
+        }
 
         var windowHeading = $("<div></div>")
           .attr("class", "panel-heading")
@@ -69,7 +76,7 @@ function fetchMovie(callback) {
 
         var windowBody = $("<div></div>")
           .attr("class", "panel-body")
-          .append("<p>This will be a poster</p>");
+          .append([poster]);
 
         var windowView = $("<div></div>")
           .append([windowHeading, windowBody])
