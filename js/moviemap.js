@@ -7,10 +7,9 @@ var model = {
   // windows: ["1", "2", "3", "4"],
   searchTerm: "",
   currentTitles: [],
-  currentID: [],
+  currentIDs: [],
   currentLocation: "Chicago",
   currentLocations: [],
-  addresses: [],
   zoom: 4
 };
 
@@ -55,32 +54,35 @@ function fetchMovie(callback) {
 
       model.currentTitles.forEach(function(movie) {
 
-        var title = $("<h6></h6>").text(movie.title);
-
-        var year = $("<h6></h6>").text(movie.release_date.slice(0, 4));
-
         var poster;
         if (movie.poster_path != null) {
           poster = $("<img></img>")
             .attr("src", tmdbApi.posterUrl(movie))
-            .attr("class", "img-responsive")
-            .attr("width", "50%");
+            .attr("class", "img-responsive");
           console.log(tmdbApi.posterUrl(movie));
         } else {
           poster = $("<p>No poster to display</p>");
         }
 
+        var title = $("<h6></h6>").text(movie.title);
+
+        var year = $("<h6></h6>").text(movie.release_date.slice(0, 4));
+
+        var overview = $("<p></p>").text(movie.overview);
+
         var windowHeading = $("<div></div>")
           .attr("class", "panel-heading")
-          .append([title, year]);
+          .attr("width", "50%")
+          .append([poster]);
 
         var windowBody = $("<div></div>")
           .attr("class", "panel-body")
-          .append([poster]);
+          .attr("width", "50%")
+          .append([title, year, overview]);
 
         var windowView = $("<div></div>")
-          .append([windowHeading, windowBody])
-          .attr("class", "panel panel-default");
+          .attr("class", "panel panel-default")
+          .append([windowHeading, windowBody]);
                 // TODO checkout bootstrap panels
 
         model.windows.push(windowView);
@@ -165,7 +167,8 @@ function render() {
       // TODO attach correct model.windows to each marker
       // TODO figure out why blank infowindow appears over content infowindow
     .infowindow({
-      content: ""
+      content: "",
+      maxWidth: 250
     })
     .then(function(infowindow) {
       var map = this.get(0);
