@@ -5,11 +5,23 @@ html, body {
 }
 
 header {
+    margin: 0 auto;
     display: inline-block;
+    padding-right: 0;
+}
+
+#front-page {
+    margin: 0 auto;
+}
+
+#map-page {
+    padding: 0;
 }
 
 #gmap3 {
     width: 100%;
     height: 500px;
     background-color: grey;
+    padding-right: 0;
+    float: none;
 }

@@ -8,6 +8,7 @@ var model = {
   searchTerm: "",
   currentTitles: [],
   currentIDs: [],
+  imdbIDs:[],
   currentLocation: "Chicago",
   currentLocations: [],
   zoom: 4
@@ -29,6 +30,7 @@ function markerLocations() {
     {position: [41.8781, -87.6298],
     draggable: true},
     {position: [44.28952958093682, -86.152559438984804]},
+    {position: [44.28952958093682, -40.152559438984804]},
     {position: [42.28952958093682, -88.1501188139848408]},
     {position: [44.88952958093682, -87.0000188139848408]}
   ];
@@ -38,9 +40,34 @@ function markerLocations() {
   };
 };
 
+function imdbId() {
+  var idString;
+  for (var i=0; i<model.currentIDs.length; i++) {
+    idString = String(model.currentIDs[i]);
+    $.ajax({
+      url: tmdbApi.root + "/movie/" + idString,
+      data: {
+        api_key: tmdbApi.token
+      },
+      success: function(response) {
+        var id = response.imdb_id;
+        model.imdbIDs.push(id);
+      },
+      error: function(err) {
+        console.log(err);
+      }
+    });
+  }
+
+};
+
 function fetchMovie(callback) {
-  model.currentTitles = [];
   model.windows = [];
+  model.imdbIDs = [];
+  model.currentIDs = [];
+  model.currentTitles = [];
+  model.currentLocations = [];
+
   $.ajax({
     url: tmdbApi.root + "/search/movie",
     data: {
@@ -53,6 +80,8 @@ function fetchMovie(callback) {
       console.log(model.currentTitles);
 
       model.currentTitles.forEach(function(movie) {
+
+        model.currentIDs.push(movie.id);
 
         var poster;
         if (movie.poster_path != null) {
@@ -88,8 +117,12 @@ function fetchMovie(callback) {
         model.windows.push(windowView);
 
       });
-      console.log(model.windows)
+      console.log(model.windows);
+      console.log(model.currentIDs);
       callback;
+    },
+    error: function(err) {
+      console.log(err);
     }
   });
 };
@@ -142,10 +175,8 @@ function fetchMovie(callback) {
 
 
 // DOM Event Handlers
-
 function render() {
-
-  model.currentLocations = [];
+  // model.currentLocations = [];
 
 
   markerLocations();

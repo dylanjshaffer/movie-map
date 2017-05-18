@@ -22,7 +22,7 @@
 </head>
 <body>
 
-  <header>
+  <header id="search-options">
     <div class="row">
       <div class="col-sm-4">
         <h1>onLocation</h1>
@@ -55,12 +55,21 @@
   </header>
 
   <main>
-    <section>
-      <div class="map" id="gmap3"></div>
-
-      <div id="test-space"></div>
-
+    <!-- TODO write a jquery function to eliminate duplication of search html, OR toggle css to use original header as front page -->
+    <section id="front-page" hidden>
+      <div>
+        <h1>onLocation</h1>
+        <h5>A thing that does stuff</h5>
+      </div>
     </section>
+
+    <section id="map-page">
+      <div class="row">
+        <div class="c"
+          <div class="map" id="gmap3"></div>
+      </div>
+    </section>
+
 
   </main>
 
