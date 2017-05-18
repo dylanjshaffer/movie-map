@@ -26,6 +26,8 @@ var tmdbApi = {
 };
 
 function markerLocations() {
+
+
   var positions = [
     {position: [41.8781, -87.6298],
     draggable: true},
@@ -58,7 +60,6 @@ function imdbId() {
       }
     });
   }
-
 };
 
 function fetchMovie(callback) {
@@ -117,8 +118,7 @@ function fetchMovie(callback) {
         model.windows.push(windowView);
 
       });
-      console.log(model.windows);
-      console.log(model.currentIDs);
+      imdbId();
       callback;
     },
     error: function(err) {
