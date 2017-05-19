@@ -2,18 +2,23 @@
 // MODEL & HELPERS
 
 var model = {
-  map: document.getElementById("#gmap3"),
+  map: document.getElementById("gmap3"),
   windows: [],
   // windows: ["1", "2", "3", "4"],
   searchTerm: "",
   currentTitles: [],
   currentIDs: [],
-  imdbIDs:[],
+  imdbIDs: [],
   currentLocation: "Chicago",
-  currentLocations: [],
+  currentLocations: [{address: "Chicago"}],
+  locationInfo: [],
   zoom: 4
 };
 
+var myApiFilms = {
+  root: "http://www.myapifilms.com/imdb/idIMDB",
+  token: "54e5c6a2-c810-4e71-9f78-a376db353394"
+}
 var tmdbApi = {
   root: "https://api.themoviedb.org/3",
   token: "24758e2d6d872edf774b8e3777b4d0de", //
@@ -25,49 +30,98 @@ var tmdbApi = {
   }
 };
 
-function markerLocations() {
-
-
-  var positions = [
-    {position: [41.8781, -87.6298],
-    draggable: true},
-    {position: [44.28952958093682, -86.152559438984804]},
-    {position: [44.28952958093682, -40.152559438984804]},
-    {position: [42.28952958093682, -88.1501188139848408]},
-    {position: [44.88952958093682, -87.0000188139848408]}
-  ];
-
-  for (var i=0; i<positions.length; i++){
-    model.currentLocations.push(positions[i]);
-  };
-};
-
-function imdbId() {
-  var idString;
-  for (var i=0; i<model.currentIDs.length; i++) {
-    idString = String(model.currentIDs[i]);
+function getShootingLocations() {
+  for (var i=0; i<model.imdbIDs.length; i++) {
     $.ajax({
-      url: tmdbApi.root + "/movie/" + idString,
+      url: myApiFilms.root,
       data: {
-        api_key: tmdbApi.token
+        idIMDB: model.imdbIDs[i],
+        token: myApiFilms.token,
+        filmingLocations: "2"
       },
       success: function(response) {
-        var id = response.imdb_id;
-        model.imdbIDs.push(id);
+        var movie = response.data.movies;
+        if (movie[0].filmingLocations != undefined) {
+          var title = movie[0].title;
+          var address = [];
+          var remarks = [];
+          movie[0].filmingLocations.forEach( function(index) {
+            address.push(index.location);
+            remarks.push(index.remarks);
+          });
+
+          model.currentLocations.push({
+            address: address
+          })
+
+          model.locationInfo.push({
+            title: title,
+            address: address,
+            remarks: remarks
+          });
+        } else {
+          console.log("No locations");
+        }
+
+
+      // TODO geocode locations, or try creating address list like positions list in markerLocations() below
+
       },
       error: function(err) {
         console.log(err);
       }
     });
-  }
+  };
+  render();
 };
 
-function fetchMovie(callback) {
+
+// function markerLocations() {
+  // var positions = [
+  //   {position: [41.8781, -87.6298],
+  //   draggable: true},
+  //   {position: [44.28952958093682, -86.152559438984804]},
+  //   {position: [44.28952958093682, -40.152559438984804]},
+  //   {position: [42.28952958093682, -88.1501188139848408]},
+  //   {position: [44.88952958093682, -87.0000188139848408]}
+  // ];
+
+//   for (var i=0; i<model.locationInfo.length; i++){
+//     positions.push(model.locationInfo.address[i]);
+//   };
+// };
+
+function imdbId() {
+  // model.imdbIDs = [];
+  var idString = "";
+  var imdb;
+  model.currentIDs.forEach(function(currentId) {
+    idString = String(currentId);
+    $.ajax({
+      url: tmdbApi.root + "/movie/"+ idString,
+      data: {
+        api_key: tmdbApi.token
+      },
+      success: function(response) {
+        var imdb = response.imdb_id;
+        console.log(imdb);
+        model.imdbIDs.push(imdb);
+        // markerLocations();
+      },
+      error: function(err) {
+        console.log(err);
+      }
+    });
+  });
+  // getShootingLocations();
+};
+
+function fetchMovie() {
   model.windows = [];
-  model.imdbIDs = [];
   model.currentIDs = [];
   model.currentTitles = [];
   model.currentLocations = [];
+  model.locationInfo = [];
 
   $.ajax({
     url: tmdbApi.root + "/search/movie",
@@ -77,7 +131,8 @@ function fetchMovie(callback) {
       include_adult: false
     },
     success: function(response) {
-      model.currentTitles = response.results;
+      // Due to API limitations, currently limits results passed to model.currentTitles to top 5
+      model.currentTitles = response.results.slice(0, 4);
       console.log(model.currentTitles);
 
       model.currentTitles.forEach(function(movie) {
@@ -119,7 +174,6 @@ function fetchMovie(callback) {
 
       });
       imdbId();
-      callback;
     },
     error: function(err) {
       console.log(err);
@@ -178,11 +232,7 @@ function fetchMovie(callback) {
 function render() {
   // model.currentLocations = [];
 
-
-  markerLocations();
-
-  $("#test-space").append(model.windows);
-
+  // markerLocations();
   $("#gmap3")
     .gmap3({
       address: model.currentLocation,
@@ -234,7 +284,7 @@ function search() {
     evt.preventDefault();
     model.searchTerm = $("#search-term").val();
     if ($("#search-param").val() == "title-search") {
-      fetchMovie(render);
+      fetchMovie();
 
 
       // TODO write this function
