@@ -2,7 +2,7 @@
 // MODEL & HELPERS
 
 var model = {
-  map: document.getElementById("gmap3"),
+  // map: document.getElementById("gmap3"),
   windows: [],
   // windows: ["1", "2", "3", "4"],
   searchTerm: "",
@@ -50,15 +50,15 @@ function getShootingLocations() {
             remarks.push(index.remarks);
           });
 
-          model.currentLocations.push({
-            address: address
-          })
+          model.currentLocations.push(
+            {address: address}
+          )
 
-          model.locationInfo.push({
-            title: title,
+          model.locationInfo.push(
+            {title: title,
             address: address,
-            remarks: remarks
-          });
+            remarks: remarks}
+          );
         } else {
           console.log("No locations");
         }
@@ -92,7 +92,7 @@ function getShootingLocations() {
 // };
 
 function imdbId() {
-  // model.imdbIDs = [];
+  model.imdbIDs = [];
   var idString = "";
   var imdb;
   model.currentIDs.forEach(function(currentId) {
@@ -212,11 +212,10 @@ function fetchMovie() {
 
 // Map
 
-// function addMarkers() {
+// TODO function addMarkers() {
 //   for (var i=0; i<model.currentLocations.length; i++) {
-//     model.addresses.push("{address: " + model.currentLocations[i] + "}")
+//
 //   };
-//   console.log(addresses);
 // };
 
 // function changeCenter(center) {
@@ -248,7 +247,7 @@ function render() {
       // TODO attach correct model.windows to each marker
       // TODO figure out why blank infowindow appears over content infowindow
     .infowindow({
-      content: "",
+      // content: "",
       maxWidth: 250
     })
     .then(function(infowindow) {
@@ -274,7 +273,6 @@ function render() {
 };
 
 function search() {
-  model.searchTerm = "";
 
 
   $("#search-param").change(function () {
