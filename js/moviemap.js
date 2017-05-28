@@ -4,11 +4,8 @@
 var model = {
   map: document.getElementById("gmap3"),
   windows: [],
-  // windows: ["1", "2", "3", "4"],
-  searchTerms: [],
-  currentTitles: [],
-  currentIDs: [],
-  imdbIDs: [],
+  imdbID: "",
+  tmdbID: "",
   currentLocation: "Chicago",
   currentLocations: [{address: "Chicago"}],
   locationInfo: [],
@@ -18,7 +15,7 @@ var model = {
 var myApiFilms = {
   root: "http://www.myapifilms.com/imdb/idIMDB",
   token: "54e5c6a2-c810-4e71-9f78-a376db353394"
-}
+};
 var tmdbApi = {
   root: "https://api.themoviedb.org/3",
   token: "24758e2d6d872edf774b8e3777b4d0de", //
@@ -33,51 +30,46 @@ var tmdbApi = {
 
 function getShootingLocations() {
   // very slow, possibly due to the free version of the API not accepting an array of IDs for a single AJAX request
-  for (var i=0; i<model.imdbIDs.length; i++) {
-    $.ajax({
-      url: myApiFilms.root,
-      data: {
-        idIMDB: String(model.imdbIDs[i]),
-        token: myApiFilms.token,
-        filmingLocations: "2"
-      },
-      success: function(response) {
-        // TODO WHY DOESN'T THIS WORK ANYMORE??
-        var movie = response.data.movies;
-        for (var i=0; i<movie[0].length; i++) {
-          if (movie[i].filmingLocations != undefined) {
-            var title = movie.title;
-            var address = [];
-            var remarks = [];
-            movie[0].filmingLocations.forEach( function(index) {
-              address.push(index.location);
-              remarks.push(index.remarks);
-            });
+  $.ajax({
+    url: myApiFilms.root,
+    data: {
+      idIMDB: model.imdbID,
+      token: myApiFilms.token,
+      filmingLocations: "2"
+    },
+    success: function(response) {
+      // TODO WHY DOESN'T THIS WORK ANYMORE??
+      var movie = response.data.movies;
+      if (movie[0].filmingLocations !== undefined) {
+        var title = movie[0].title;
+        var address = [];
+        var remarks = [];
+        movie[0].filmingLocations.forEach( function(index) {
+          address.push(index.location);
+          remarks.push(index.remarks);
+        });
 
-            model.currentLocations.push(address);
+        model.currentLocations.push(address);
 
-            model.locationInfo.push(
-              {title: title,
-              address: address,
-              remarks: remarks}
-            );
-          } else {
-            console.log("No locations");
-          }
-
-
-      // TODO geocode locations, or try creating address list like positions list in markerLocations() below
-
-        };
-      },
-      error: function(err) {
-        console.log(err);
+        model.locationInfo.push(
+          {title: title,
+          address: address,
+          remarks: remarks}
+        );
+      } else {
+        console.log("No locations");
       }
-    });
-  };
-  // render();
-};
 
+
+    // TODO geocode locations, or try creating address list like positions list in markerLocations() below
+
+    },
+    error: function(err) {
+      console.log(err);
+    }
+  });
+// render();
+};
 
 // function markerLocations() {
   // var positions = [
@@ -94,89 +86,52 @@ function getShootingLocations() {
 //   };
 // };
 
-function imdbId() {
-  model.imdbIDs = [];
-  var idString = "";
-  var imdb;
-  model.currentIDs.forEach(function(currentId) {
-    idString = String(currentId);
-    $.ajax({
-      url: tmdbApi.root + "/movie/"+ idString,
-      data: {
-        api_key: tmdbApi.token
-      },
-      success: function(response) {
-        var imdb = response.imdb_id;
-        console.log(imdb);
-        model.imdbIDs.push(imdb);
-        // markerLocations();
-      },
-      error: function(err) {
-        console.log(err);
-      }
-    });
-  });
-  // getShootingLocations();
-};
-
-function fetchMovie() {
+function fetchMovie(id, callback) {
   model.windows = [];
-  model.currentIDs = [];
-  model.currentTitles = [];
   model.currentLocations = [];
   model.locationInfo = [];
 
+
   $.ajax({
-    url: tmdbApi.root + "/search/movie",
+    url: tmdbApi.root + "/movie/"+ id,
     data: {
-      api_key: tmdbApi.token,
-      query: model.searchTerms,
-      include_adult: false
+      api_key: tmdbApi.token
     },
     success: function(response) {
-      // Due to API limitations, currently limits results passed to model.currentTitles to top 5
-      model.currentTitles = response.results.slice(0, 4);
-      console.log(model.currentTitles);
+      model.imdbID = response.imdb_id;
+      // markerLocations();
+      var poster;
+      if (response.poster_path != null) {
+        poster = $("<img></img>")
+          .attr("src", tmdbApi.posterUrl(response))
+          .attr("class", "img-responsive");
+        console.log(tmdbApi.posterUrl(response));
+      } else {
+        poster = $("<p>No poster to display</p>");
+      }
 
-      model.currentTitles.forEach(function(movie) {
+      var title = $("<h6></h6>").text(response.title);
 
-        model.currentIDs.push(movie.id);
+      var year = $("<h6></h6>").text(response.release_date.slice(0, 4));
 
-        var poster;
-        if (movie.poster_path != null) {
-          poster = $("<img></img>")
-            .attr("src", tmdbApi.posterUrl(movie))
-            .attr("class", "img-responsive");
-          console.log(tmdbApi.posterUrl(movie));
-        } else {
-          poster = $("<p>No poster to display</p>");
-        }
+      var overview = $("<p></p>").text(response.overview);
 
-        var title = $("<h6></h6>").text(movie.title);
+      var windowHeading = $("<div></div>")
+        .attr("class", "panel-heading")
+        .attr("width", "50%")
+        .append([poster]);
 
-        var year = $("<h6></h6>").text(movie.release_date.slice(0, 4));
+      var windowBody = $("<div></div>")
+        .attr("class", "panel-body")
+        .attr("width", "50%")
+        .append([title, year, overview]);
 
-        var overview = $("<p></p>").text(movie.overview);
+      var windowView = $("<div></div>")
+        .attr("class", "panel panel-default")
+        .append([windowHeading, windowBody]);
+              // TODO checkout bootstrap panels
 
-        var windowHeading = $("<div></div>")
-          .attr("class", "panel-heading")
-          .attr("width", "50%")
-          .append([poster]);
-
-        var windowBody = $("<div></div>")
-          .attr("class", "panel-body")
-          .attr("width", "50%")
-          .append([title, year, overview]);
-
-        var windowView = $("<div></div>")
-          .attr("class", "panel panel-default")
-          .append([windowHeading, windowBody]);
-                // TODO checkout bootstrap panels
-
-        model.windows.push(windowView);
-
-      });
-      imdbId();
+      model.windows.push(windowView);
     },
     error: function(err) {
       console.log(err);
@@ -278,13 +233,8 @@ function render() {
         });
       });
     });
-  search();
 };
 
-// function log(message) {
-//   $("<div>").text(message).prependTo("#log");
-//   $("#log").scrollTop(0);
-// };
 
 function search() {
 
@@ -302,7 +252,6 @@ function search() {
         success: function(respObj) {
           titleList=[];
           var movies = respObj.results;
-          // model.searchTerms = response.results;
           movies.forEach(function(movie){
             if (movie.title.toLowerCase().indexOf(request.term) === 0) {
               if (movie.poster_path != null) {
@@ -323,70 +272,14 @@ function search() {
     autoFocus: true,
     select: function(event, ui) {
       event.preventDefault();
-      titleList = [];
       $("#search-term").val(ui.item.label.slice(0, ui.item.label.length - 9));
-    },
+      model.currentFilm = ui.item.value;
+      fetchMovie(model.currentFilm, getShootingLocations);
+    }
   });
+  render();
 };
-  // $("#autocomplete").autocomplete({
-  //   serviceUrl: tmdbApi.root + "/search/movie",
-  //   minChars: 2,
-  //   showNoSuggestionNotice: true,
-  //   noSuggestionNotice: "No movies found",
-  //   ajaxSettings: {
-  //     data: {
-  //       query: $(this).val(),
-  //       api_key: tmdbApi.token,
-  //       include_adult: false
-  //     }
-  //   },
-    // transformResult: function(response) {
-    //   return {
-    //     suggestions: $.map(response.results, function(result) {
-    //       return {
-    //         value: String(result.title),
-    //         data: result.release_date.slice(0, 4)
-    //       };
-    //     })
-    //   };
-    // },
-//     onSelect: function(suggestion) {
-//       console.log("you selected: " + suggestion.value);
-//     }
-//   });
-//   // render();
-// };
-
-
-  // $("#search-param").change(function () {
-  //   $("#search-term").attr("placeholder", ($(this).val() == "title-search") ? "Enter movie title" : "Enter location")
-  // });
-  // if ($("#search-param").val() == "title-search") {
-
-    // $("#search").submit(function(evt) {
-    //   evt.preventDefault();
-    //   model.searchTerms = $("#search-term").val();
-    //   fetchMovie();
-    // });
-
-
-      // TODO write this function
-      // displayTitleLocations(searchTerms);
-
-  // } else if ($("#search-param").val() == "location-search") {
-  //   $("#search").submit(function(evt) {
-  //     evt.preventDefault();
-  //     model.searchTerms = $("#search-term").val();
-  //   });
-  //   // TODO get coordinates and rerender
-  //   callback();
-  //   // TODO call myAPIfilms with searchTerms as location
-  // } else {
-  //   // TODO display error "must choose search parameter"
-  //   console.log("error");
-  // }
-
 
 $("document").ready(function(){
-  render();
+  search();
 });
