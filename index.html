@@ -1,61 +1,53 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>Movie Map</title>
+    <title>onLocation</title>
 
-  <!-- jQuery -->
-  <script src="https://code.jquery.com/jquery-2.2.3.js"></script>
+    <!-- jQuery -->
+    <script src="http://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src="http://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+    <link href="http://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" rel="stylesheet" type="text/css"/>
 
-  <!-- Bootstrap CSS -->
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.4/css/bootstrap.min.css" integrity="sha384-2hfp1SzUoho7/TsGGGDaFdsuuDL0LX2hnUp6VkX3CUQ2K4K+xjboZdsXyp4oUHZj" crossorigin="anonymous">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.4/css/bootstrap.min.css" integrity="sha384-2hfp1SzUoho7/TsGGGDaFdsuuDL0LX2hnUp6VkX3CUQ2K4K+xjboZdsXyp4oUHZj" crossorigin="anonymous">
 
-  <!-- CSS -->
-  <link rel="stylesheet" href="css/styles.css"/>
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/styles.css"/>
 
-  <!-- Google Maps -->
-  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBH1GdmBFyhL3U_AqZLzMk_iQl5NXuU-Mc">
-  </script>
+    <!-- Google Maps -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBH1GdmBFyhL3U_AqZLzMk_iQl5NXuU-Mc">
+    </script>
 
-</head>
-<body>
+  </head>
+  <body>
 
-  <header id="search-options">
-    <div class="row">
-      <div class="col-sm-4">
+    <header id="search-options">
+      <div>
         <h1>onLocation</h1>
         <h5>A thing that does stuff</h5>
       </div>
 
-      <div class="col-sm-4">
-
-        <form id="search">
-          <input type="text" id="search-term" placeholder=""/>
-          <select id="search-param">
-            <option value="disabled" disabled selected>Search by...</option>
-            <option value="title-search">Movie Title</option>
-            <option value="location-search">Location</option>
-          </select>
-        </form>
+      <div class="ui-widget">
+        <input type="text" class="ui-autocomplete-input" name="title" id="search-term" placeholder="Enter a movie title" autocomplete="off"/>
+      </div>
+      <div class="ui-widget" style="margin-top:2em; font-family:Arial">
+        <div id="log" style="height: 200px; width: 300px; overflow: auto;" class="ui-widget-content" hidden></div>
       </div>
 
-      <div class="col-sm-4">
-        <form id="genre-selector">
-          <select id="genre">
-            <option value="standard" selected>Choose Map Genre</option>
-            <option value="scifi">Sci-Fi</option>
-            <option value="western">Western</option>
-          </select>
-        </form>
-      </div>
-    </div>
+          <!-- <form id="search">
+            <input type="text" id="search-term" autocomplete="on" placeholder="Enter movie title"/> -->
 
-  </header>
-
-  <main>
-    <!-- TODO write a jquery function to eliminate duplication of search html, OR toggle css to use original header as front page -->
+            <!-- <select id="search-param">
+              <option value="disabled" disabled selected>Search by...</option>
+              <option value="title-search">Movie Title</option>
+              <option value="location-search">Location</option>
+            </select> -->
+          <!-- </form> -->
+    </header>
+      <!-- TODO write a jquery function to eliminate duplication of search html, OR toggle css to use original header as front page -->
     <section id="front-page" hidden>
       <div>
         <h1>onLocation</h1>
@@ -64,22 +56,15 @@
     </section>
 
     <section id="map-page">
-      <div class="row">
-        <div class="map" id="gmap3"></div>
-      </div>
-      <div class="row" id="test-space">
-
-      </div>
+      <div class="map" id="gmap3"></div>
     </section>
 
 
-  </main>
+    <!-- Gmap3 -->
+    <script type="text/javascript" src="js/gmap3.min.js"></script>
 
-  <!-- Gmap3 -->
-  <script type="text/javascript" src="js/gmap3.min.js"></script>
+    <!-- script -->
+    <script src="js/moviemap.js"></script>
 
-  <!-- script -->
-  <script src="js/moviemap.js"></script>
-
-</body>
+  </body>
 </html>
