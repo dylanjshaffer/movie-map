@@ -7,7 +7,7 @@ var model = {
   imdbID: "",
   tmdbID: "",
   currentLocation: "Chicago",
-  currentLocations: [{address: "Chicago"}],
+  currentLocations: [],
   locationInfo: [],
   zoom: 4
 };
@@ -39,23 +39,67 @@ function getShootingLocations() {
     },
     success: function(response) {
       // TODO WHY DOESN'T THIS WORK ANYMORE??
-      var movie = response.data.movies;
-      if (movie[0].filmingLocations !== undefined) {
-        var title = movie[0].title;
-        var address = [];
-        var remarks = [];
-        movie[0].filmingLocations.forEach( function(index) {
-          address.push(index.location);
-          remarks.push(index.remarks);
+      var movie = response.data.movies[0];
+      if (movie.filmingLocations !== undefined) {
+        var title = movie.title;
+        // var addresses = [];
+        // var remarks = [];
+        movie.filmingLocations.forEach( function(index) {
+          model.locationInfo.push({address: index.location, remarks: index.remarks});
+          // addresses.push(index.location);
+          // remarks.push(index.remarks);
         });
+        // model.currentLocations = addresses;
+        // model.locationInfo.map(
+        //   {title: title,
+        //   address: addresses,
+        //   remarks: remarks}
 
-        model.currentLocations.push(address);
 
-        model.locationInfo.push(
-          {title: title,
-          address: address,
-          remarks: remarks}
-        );
+        $("#gmap3")
+        .gmap3({
+          zoom: model.zoom
+        })
+        .marker(function() {
+          var markerArray=[];
+          for (var i=0; i<model.locationInfo.length; i++) {
+            markerArray.push({address: model.locationInfo[i].address, title: title});
+          };
+          return markerArray;
+        })
+        .wait(2000)
+        .fit()
+          // TODO attach correct model.windows to each marker
+          // TODO figure out why blank infowindow appears over content infowindow
+        .infowindow({
+          // content: "",
+          maxWidth: 250
+        })
+        .then(function(infowindow) {
+          var map = this.get(0);
+          var markers = this.get(1);
+          // for (var i=0; i<markers.length; i++) {
+          markers.forEach(function(marker){
+            console.log(marker);
+            marker.addListener('mouseover', function() {
+              if (model.windows.length > 0) {
+                model.locationInfo.forEach(function(loc){
+                  if (loc.address === marker.get(0)) {
+                      var locationWinContent = $("<p>" + loc.address + "</p><p>" + loc.remarks + "</p>");
+                      $("#location-div").append(locationWinContent);
+                  }
+                });
+                // TODO map windows to markers
+                infowindow.setContent(model.windows[0][0]);
+              } else {
+                infowindow.setContent("No information available");
+              }
+            });
+            marker.addListener('click', function() {
+              infowindow.open(map, marker);
+            });
+          });
+        });
       } else {
         console.log("No locations");
       }
@@ -68,23 +112,9 @@ function getShootingLocations() {
       console.log(err);
     }
   });
-// render();
+// initMap();
 };
 
-// function markerLocations() {
-  // var positions = [
-  //   {position: [41.8781, -87.6298],
-  //   draggable: true},
-  //   {position: [44.28952958093682, -86.152559438984804]},
-  //   {position: [44.28952958093682, -40.152559438984804]},
-  //   {position: [42.28952958093682, -88.1501188139848408]},
-  //   {position: [44.88952958093682, -87.0000188139848408]}
-  // ];
-
-//   for (var i=0; i<model.locationInfo.length; i++){
-//     positions.push(model.locationInfo.address[i]);
-//   };
-// };
 
 function fetchMovie(id, callback) {
   model.windows = [];
@@ -99,7 +129,6 @@ function fetchMovie(id, callback) {
     },
     success: function(response) {
       model.imdbID = response.imdb_id;
-      // markerLocations();
       var poster;
       if (response.poster_path != null) {
         poster = $("<img></img>")
@@ -116,6 +145,11 @@ function fetchMovie(id, callback) {
 
       var overview = $("<p></p>").text(response.overview);
 
+      var locationDiv =
+      $("<div id='location-div'></div>");
+
+      getShootingLocations();
+
       var windowHeading = $("<div></div>")
         .attr("class", "panel-heading")
         .attr("width", "50%")
@@ -124,7 +158,7 @@ function fetchMovie(id, callback) {
       var windowBody = $("<div></div>")
         .attr("class", "panel-body")
         .attr("width", "50%")
-        .append([title, year, overview]);
+        .append([title, year, locationDiv, overview]);
 
       var windowView = $("<div></div>")
         .attr("class", "panel panel-default")
@@ -132,6 +166,7 @@ function fetchMovie(id, callback) {
               // TODO checkout bootstrap panels
 
       model.windows.push(windowView);
+      callback;
     },
     error: function(err) {
       console.log(err);
@@ -170,19 +205,6 @@ function fetchMovie(id, callback) {
 
 // Map
 
-function addMarkers() {
-  var markerArray = [];
-  model.currentLocations.forEach(function(arr){
-    arr.forEach(function(location) {
-      markerArray.push(
-        {address: location}
-      );
-    });
-  });
-  return markerArray;
-  console.log(markerArray);
-};
-
 // function changeCenter(center) {
 //   $("#gmap3").gmap3.setCenter(center);
 //   $("#gmap3").gmap3.setZoom(11);
@@ -193,7 +215,7 @@ function addMarkers() {
 
 
 // DOM Event Handlers
-function render() {
+function initMap() {
   // model.currentLocations = [];
   // markerLocations();
   $("#gmap3")
@@ -203,36 +225,6 @@ function render() {
     })
     // .cluster({
     //   size: 50,
-    .marker(
-      model.currentLocations
-    )
-    .wait(2000)
-    .fit()
-      // TODO attach correct model.windows to each marker
-      // TODO figure out why blank infowindow appears over content infowindow
-    .infowindow({
-      // content: "",
-      maxWidth: 250
-    })
-    .then(function(infowindow) {
-      var map = this.get(0);
-      var markers = this.get(1);
-      // for (var i=0; i<markers.length; i++) {
-      markers.forEach(function(marker){
-        console.log(marker);
-        marker.addListener('mouseover', function() {
-          if (model.windows.length > 0) {
-            // TODO map windows to markers
-            infowindow.setContent(model.windows[0][0]);
-          } else {
-            infowindow.setContent("No information available");
-          }
-        });
-        marker.addListener('click', function() {
-          infowindow.open(map, marker);
-        });
-      });
-    });
 };
 
 
@@ -277,7 +269,7 @@ function search() {
       fetchMovie(model.currentFilm, getShootingLocations);
     }
   });
-  render();
+  initMap();
 };
 
 $("document").ready(function(){
