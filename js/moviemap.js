@@ -57,66 +57,58 @@ function getShootingLocations() {
 
 
         $("#gmap3")
-        .gmap3({
-          zoom: model.zoom
-        })
-        .marker(function() {
-          var markerArray=[];
-          for (var i=0; i<model.locationInfo.length; i++) {
-            markerArray.push({address: model.locationInfo[i].address, title: title});
-          };
-          return markerArray;
-        })
-        .wait(2000)
-        .fit()
-          // TODO attach correct model.windows to each marker
-          // TODO figure out why blank infowindow appears over content infowindow
-        .infowindow({
-          // content: "",
-          maxWidth: 250
-        })
-        .then(function(infowindow) {
-          var map = this.get(0);
-          var markers = this.get(1);
-          // for (var i=0; i<markers.length; i++) {
-          markers.forEach(function(marker){
-            console.log(marker);
-            marker.addListener('mouseover', function() {
-              if (model.windows.length > 0) {
-                model.locationInfo.forEach(function(loc){
-                  if (loc.address === marker.get(0)) {
-                      var locationWinContent = $("<p>" + loc.address + "</p><p>" + loc.remarks + "</p>");
-                      $("#location-div").append(locationWinContent);
+          .gmap3({
+            zoom: model.zoom
+          })
+          .marker(function() {
+            var markerArray=[];
+            for (var i=0; i<model.locationInfo.length; i++) {
+              markerArray.push({address: model.locationInfo[i].address, title: model.locationInfo[i].address});
+            };
+            return markerArray;
+          })
+          .wait(2000)
+          .fit()
+            // TODO attach correct model.windows to each marker
+          .infowindow({
+            // content: "",
+            maxWidth: 250
+          })
+          .then(function(infowindow) {
+            var map = this.get(0);
+            var markers = this.get(1);
+            // for (var i=0; i<markers.length; i++) {
+            markers.forEach(function(marker){
+              console.log(marker);
+              marker.addListener('mouseover', function() {
+
+                model.locationInfo.forEach(function(locationObj){
+                  if (locationObj.address === marker.title) {
+                    var locationWinContent = $("<p>" + locationObj.address + "</p><p>" + locationObj.remarks + "</p>");
+                    $("#location-div").append(locationWinContent);
+                    infowindow.setContent(model.windows[0][0]);
                   }
-                });
-                // TODO map windows to markers
-                infowindow.setContent(model.windows[0][0]);
-              } else {
-                infowindow.setContent("No information available");
-              }
-            });
-            marker.addListener('click', function() {
-              infowindow.open(map, marker);
+                  // TODO map windows to markers
+                  marker.addListener('click', function() {
+                    infowindow.open(map, marker);
+                  });
+
+              });
             });
           });
         });
       } else {
         console.log("No locations");
       }
-
-
-    // TODO geocode locations, or try creating address list like positions list in markerLocations() below
-
     },
     error: function(err) {
       console.log(err);
     }
-  });
 // initMap();
+  });
 };
 
-
-function fetchMovie(id, callback) {
+function fetchMovie(id) {
   model.windows = [];
   model.currentLocations = [];
   model.locationInfo = [];
@@ -148,7 +140,7 @@ function fetchMovie(id, callback) {
       var locationDiv =
       $("<div id='location-div'></div>");
 
-      getShootingLocations();
+      var locations = getShootingLocations();
 
       var windowHeading = $("<div></div>")
         .attr("class", "panel-heading")
@@ -166,52 +158,12 @@ function fetchMovie(id, callback) {
               // TODO checkout bootstrap panels
 
       model.windows.push(windowView);
-      callback;
     },
     error: function(err) {
       console.log(err);
     }
   });
 };
-
-
-
-// function goToCoordinates(location) {
-//
-//   $.ajax({
-//     url: "https://maps.googleapis.com/maps/api/geocode/json?key=AIzaSyBH1GdmBFyhL3U_AqZLzMk_iQl5NXuU-Mc&address=" + location,
-//     success: function(response) {
-//       // console.log(response.results[0].geometry.location);
-//       var isRealLocation = response.results.length > 0;
-//       if (!isRealLocation) {
-//         // TODO DISPLAY ERROR
-//       } else {
-//         var coordinates = response.results[0].geometry.location;
-//         model.currentLocation = {
-//           lat: coordinates.lat,
-//           lng: coordinates.lng
-//         };
-//         console.log(model.currentLocation);
-//
-//         changeCenter(model.currentLocation);
-//       }
-//     },
-//     error: function(err) {
-//       console.log(err);
-//     }
-//   });
-// }
-
-
-// Map
-
-// function changeCenter(center) {
-//   $("#gmap3").gmap3.setCenter(center);
-//   $("#gmap3").gmap3.setZoom(11);
-// may not need above function, but keep TODO
-
-// TODO set zoom based on location Info
-  // low for countries, 11 for cities, high for street level. Write function that takes searchTerms and determines location type(country, city, zip, street level address, etc)
 
 
 // DOM Event Handlers
@@ -266,7 +218,7 @@ function search() {
       event.preventDefault();
       $("#search-term").val(ui.item.label.slice(0, ui.item.label.length - 9));
       model.currentFilm = ui.item.value;
-      fetchMovie(model.currentFilm, getShootingLocations);
+      fetchMovie(model.currentFilm);
     }
   });
   initMap();
@@ -275,3 +227,41 @@ function search() {
 $("document").ready(function(){
   search();
 });
+
+
+// function goToCoordinates(location) {
+//
+//   $.ajax({
+//     url: "https://maps.googleapis.com/maps/api/geocode/json?key=AIzaSyBH1GdmBFyhL3U_AqZLzMk_iQl5NXuU-Mc&address=" + location,
+//     success: function(response) {
+//       // console.log(response.results[0].geometry.location);
+//       var isRealLocation = response.results.length > 0;
+//       if (!isRealLocation) {
+//         // TODO DISPLAY ERROR
+//       } else {
+//         var coordinates = response.results[0].geometry.location;
+//         model.currentLocation = {
+//           lat: coordinates.lat,
+//           lng: coordinates.lng
+//         };
+//         console.log(model.currentLocation);
+//
+//         changeCenter(model.currentLocation);
+//       }
+//     },
+//     error: function(err) {
+//       console.log(err);
+//     }
+//   });
+// }
+
+
+// Map
+
+// function changeCenter(center) {
+//   $("#gmap3").gmap3.setCenter(center);
+//   $("#gmap3").gmap3.setZoom(11);
+// may not need above function, but keep TODO
+
+// TODO set zoom based on location Info
+  // low for countries, 11 for cities, high for street level. Write function that takes searchTerms and determines location type(country, city, zip, street level address, etc)
