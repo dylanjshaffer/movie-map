@@ -24,29 +24,30 @@
   </head>
   <body>
 
-    <header id="search-options">
-      <div>
-        <h1>onLocation</h1>
-        <h5>A thing that does stuff</h5>
+    <div class="row">
+      <div class="col col-sm-4 col-lg-3 col-xl-2">
+        <div id="search-options">
+          <div>
+            <h1>onLocation</h1>
+            <h5>A thing that does stuff</h5>
+          </div>
+
+          <div class="ui-widget">
+            <input type="text" class="ui-autocomplete-input" name="title" id="search-term" placeholder="Enter a movie title" autocomplete="off"/>
+          </div>
+          <div class="ui-widget" style="margin-top:2em; font-family:Arial">
+            <div id="log" style="height: 200px; width: 300px; overflow: auto;" class="ui-widget-content" hidden></div>
+          </div>
+        </div>
+        <div id=movie-info></div>
+      </div>
+      <div class="col col-sm-8 col-lg-9 col-xl-10">
+        <section id="map-page">
+          <div class="map" id="gmap3"></div>
+        </section>
       </div>
 
-      <div class="ui-widget">
-        <input type="text" class="ui-autocomplete-input" name="title" id="search-term" placeholder="Enter a movie title" autocomplete="off"/>
-      </div>
-      <div class="ui-widget" style="margin-top:2em; font-family:Arial">
-        <div id="log" style="height: 200px; width: 300px; overflow: auto;" class="ui-widget-content" hidden></div>
-      </div>
-
-          <!-- <form id="search">
-            <input type="text" id="search-term" autocomplete="on" placeholder="Enter movie title"/> -->
-
-            <!-- <select id="search-param">
-              <option value="disabled" disabled selected>Search by...</option>
-              <option value="title-search">Movie Title</option>
-              <option value="location-search">Location</option>
-            </select> -->
-          <!-- </form> -->
-    </header>
+    </div>
       <!-- TODO write a jquery function to eliminate duplication of search html, OR toggle css to use original header as front page -->
     <section id="front-page" hidden>
       <div>
@@ -55,9 +56,7 @@
       </div>
     </section>
 
-    <section id="map-page">
-      <div class="map" id="gmap3"></div>
-    </section>
+
 
 
     <!-- Gmap3 -->

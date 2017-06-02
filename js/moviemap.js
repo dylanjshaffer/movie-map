@@ -86,7 +86,7 @@ function getShootingLocations() {
                   if (locationObj.address === marker.title) {
                     var locationWinContent = $("<p>" + locationObj.address + "</p><p>" + locationObj.remarks + "</p>");
                     $("#location-div").append(locationWinContent);
-                    infowindow.setContent(model.windows[0][0]);
+                    infowindow.setContent(locationWinContent);
                   }
                   // TODO map windows to markers
                   marker.addListener('click', function() {
@@ -112,6 +112,7 @@ function fetchMovie(id) {
   model.windows = [];
   model.currentLocations = [];
   model.locationInfo = [];
+  $("#movie-info").empty();
 
 
   $.ajax({
@@ -137,27 +138,28 @@ function fetchMovie(id) {
 
       var overview = $("<p></p>").text(response.overview);
 
-      var locationDiv =
-      $("<div id='location-div'></div>");
+      // var locationDiv =
+      // $("<div id='location-div'></div>");
 
-      var locations = getShootingLocations();
+      // var locations = getShootingLocations();
 
-      var windowHeading = $("<div></div>")
+      var sidebarPoster = $("<div></div>")
         .attr("class", "panel-heading")
-        .attr("width", "50%")
+        // .attr("width", "50%")
         .append([poster]);
 
-      var windowBody = $("<div></div>")
+      var sidebarBody = $("<div></div>")
         .attr("class", "panel-body")
-        .attr("width", "50%")
-        .append([title, year, locationDiv, overview]);
+        // .attr("width", "50%")
+        .append([title, year, overview]);
 
-      var windowView = $("<div></div>")
+      var sidebarView = $("<div></div>")
         .attr("class", "panel panel-default")
-        .append([windowHeading, windowBody]);
+        .append([sidebarPoster, sidebarBody]);
               // TODO checkout bootstrap panels
 
-      model.windows.push(windowView);
+      $("#movie-info").append(sidebarView);
+      // model.windows.push(sidebarView);
     },
     error: function(err) {
       console.log(err);
