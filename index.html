@@ -6,13 +6,13 @@
 
     <title>onLocation</title>
 
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.4/css/bootstrap.min.css" integrity="sha384-2hfp1SzUoho7/TsGGGDaFdsuuDL0LX2hnUp6VkX3CUQ2K4K+xjboZdsXyp4oUHZj" crossorigin="anonymous">
+
     <!-- jQuery -->
     <script src="http://code.jquery.com/jquery-3.2.1.min.js"></script>
     <script src="http://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
     <link href="http://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" rel="stylesheet" type="text/css"/>
-
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.4/css/bootstrap.min.css" integrity="sha384-2hfp1SzUoho7/TsGGGDaFdsuuDL0LX2hnUp6VkX3CUQ2K4K+xjboZdsXyp4oUHZj" crossorigin="anonymous">
 
     <!-- CSS -->
     <link rel="stylesheet" href="css/styles.css"/>
@@ -24,30 +24,36 @@
   </head>
   <body>
 
-    <div class="row">
-      <div class="col col-sm-4 col-lg-3 col-xl-2">
-        <div id="search-options">
-          <div>
+    <div class="container-fluid map-container">
+      <div class="row">
+        <!-- <div id="panel-container"> -->
+          <div id="panel">
+            <!-- <h1>onLocation</h1> -->
+
+            <div id="floating-panel">
+              <div id="search-options">
+                <div class="ui-widget">
+                  <input type="text" class="ui-autocomplete-input" name="title" id="search-term" placeholder="Enter a movie title" autocomplete="off"/>
+                </div>
+                <div class="ui-widget" style="margin-top:2em; font-family:Arial">
+                </div>
+              </div>
+              <div id=movie-info></div>
+            </div>
+          </div>
+          <div id="click">
             <h1>onLocation</h1>
-            <h5>A thing that does stuff</h5>
           </div>
+        <!-- </div> -->
 
-          <div class="ui-widget">
-            <input type="text" class="ui-autocomplete-input" name="title" id="search-term" placeholder="Enter a movie title" autocomplete="off"/>
-          </div>
-          <div class="ui-widget" style="margin-top:2em; font-family:Arial">
-            <div id="log" style="height: 200px; width: 300px; overflow: auto;" class="ui-widget-content" hidden></div>
-          </div>
-        </div>
-        <div id=movie-info></div>
-      </div>
-      <div class="col col-sm-8 col-lg-9 col-xl-10">
-        <section id="map-page">
+        <div class="map-canvas-container">
+          <!-- <div id="map-canvas"> -->
           <div class="map" id="gmap3"></div>
-        </section>
+          <!-- </div> -->
+        </div>
       </div>
-
     </div>
+
       <!-- TODO write a jquery function to eliminate duplication of search html, OR toggle css to use original header as front page -->
     <section id="front-page" hidden>
       <div>
@@ -55,9 +61,6 @@
         <h5>A thing that does stuff</h5>
       </div>
     </section>
-
-
-
 
     <!-- Gmap3 -->
     <script type="text/javascript" src="js/gmap3.min.js"></script>

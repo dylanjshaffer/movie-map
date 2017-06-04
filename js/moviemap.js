@@ -22,8 +22,8 @@ var tmdbApi = {
 
   posterUrl: function(movie) {
     var baseImageUrl = "http://image.tmdb.org/t/p/w300/";
-    console.log(baseImageUrl + movie.poster_path);
-    return baseImageUrl + movie.poster_path;
+    console.log(baseImageUrl + movie.backdrop_path);
+    return baseImageUrl + movie.backdrop_path;
   }
 };
 
@@ -118,13 +118,15 @@ function fetchMovie(id) {
   $.ajax({
     url: tmdbApi.root + "/movie/"+ id,
     data: {
-      api_key: tmdbApi.token
+      api_key: tmdbApi.token,
+      append_to_response: "videos,images"
     },
     success: function(response) {
+      console.log(response);
       model.imdbID = response.imdb_id;
       var poster;
       if (response.poster_path != null) {
-        poster = $("<img></img>")
+        poster = $("<img id='poster'></img>")
           .attr("src", tmdbApi.posterUrl(response))
           .attr("class", "img-responsive");
         console.log(tmdbApi.posterUrl(response));
@@ -143,11 +145,6 @@ function fetchMovie(id) {
 
       // var locations = getShootingLocations();
 
-      var sidebarPoster = $("<div></div>")
-        .attr("class", "panel-heading")
-        // .attr("width", "50%")
-        .append([poster]);
-
       var sidebarBody = $("<div></div>")
         .attr("class", "panel-body")
         // .attr("width", "50%")
@@ -155,7 +152,7 @@ function fetchMovie(id) {
 
       var sidebarView = $("<div></div>")
         .attr("class", "panel panel-default")
-        .append([sidebarPoster, sidebarBody]);
+        .append([poster, sidebarBody]);
               // TODO checkout bootstrap panels
 
       $("#movie-info").append(sidebarView);
@@ -175,8 +172,29 @@ function initMap() {
   $("#gmap3")
     .gmap3({
       address: model.currentLocation,
-      zoom: model.zoom
+      zoom: model.zoom,
+      mapTypeId: "Bluewater",
+      mapTypeControlOptions: {
+        mapTypeIds: ["Bluewater"],
+        style: google.maps.MapTypeControlStyle.HORIZONTAL_BAR,
+        position: google.maps.ControlPosition.TOP_CENTER
+      },
+      streetViewControl: false
     })
+    .styledmaptype(
+      "Bluewater",
+      [
+        {"featureType": "administrative","elementType": "labels.text.fill","stylers": [{"color": "#444444"}]},
+        {"featureType": "landscape","elementType": "all","stylers": [{"color": "#f2f2f2"}]},
+        {"featureType": "poi","elementType": "all","stylers": [{"visibility": "off"}]},
+        {"featureType": "road","elementType": "all","stylers": [{"saturation": -100},{"lightness": 45}]},
+        {"featureType": "road.highway","elementType":"all","stylers": [{"visibility": "simplified"}]},
+        {"featureType": "road.arterial","elementType": "labels.icon","stylers": [{"visibility": "off"}]},
+        {"featureType": "transit","elementType": "all","stylers": [{"visibility": "off"}]},
+        {"featureType": "water","elementType": "all","stylers": [{"color": "#46bcec"},{"visibility": "on"}]}
+      ],
+      {name: "Bluewater"}
+    )
     // .cluster({
     //   size: 50,
 };
@@ -185,6 +203,11 @@ function initMap() {
 function search() {
 
   var titleList;
+
+  $("#click").click(function(){
+    // $("#panel").animate({width:"toggle"}, 250);
+    $("#panel").slideToggle(250);
+  });
 
   $("#search-term").autocomplete({
     source: function(request, response) {
@@ -218,7 +241,7 @@ function search() {
     autoFocus: true,
     select: function(event, ui) {
       event.preventDefault();
-      $("#search-term").val(ui.item.label.slice(0, ui.item.label.length - 9));
+      $("#search-term").val(ui.item.label.slice(0, ui.item.label.length - 6));
       model.currentFilm = ui.item.value;
       fetchMovie(model.currentFilm);
     }
@@ -226,7 +249,7 @@ function search() {
   initMap();
 };
 
-$("document").ready(function(){
+$(document).ready(function(){
   search();
 });
 
