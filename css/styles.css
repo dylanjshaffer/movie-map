@@ -37,6 +37,7 @@ html, body {
    margin: auto;
    border: 1px solid grey;
    border-radius: 5px;
+   padding: 3px;
 }
 
 #panel-year {
@@ -45,7 +46,9 @@ html, body {
    width: fit-content;
    border: 1px solid grey;
    border-radius: 5px;
+   margin: auto;
    margin-top: 5px;
+   padding: 3px;
 }
 
 #panel-overview {
@@ -54,10 +57,15 @@ html, body {
    width: fit-content;
    border: 1px solid grey;
    border-radius: 5px;
+   margin: auto;
+   margin-top: 5px;
+   padding: 3px;
 }
 
 #search-options {
    padding-top: 50px;
+   height: auto;
+   margin: auto;
 }
 
 #poster {
@@ -79,6 +87,7 @@ html, body {
    display: block;
    position: absolute;
    left: 0;
+   opacity: 0.9;
 }
 
 .map-canvas-container {

@@ -22,14 +22,13 @@ var tmdbApi = {
 
   posterUrl: function(movie) {
     var baseImageUrl = "http://image.tmdb.org/t/p/w300/";
-    console.log(baseImageUrl + movie.backdrop_path);
     return baseImageUrl + movie.backdrop_path;
   }
 };
 
 
 function getShootingLocations() {
-  // very slow, possibly due to the free version of the API not accepting an array of IDs for a single AJAX request
+  // very slow
   $.ajax({
     url: myApiFilms.root,
     data: {
@@ -118,25 +117,22 @@ function fetchMovie(id) {
   $.ajax({
     url: tmdbApi.root + "/movie/"+ id,
     data: {
-      api_key: tmdbApi.token,
-      append_to_response: "videos,images"
+      api_key: tmdbApi.token
     },
     success: function(response) {
-      console.log(response);
       model.imdbID = response.imdb_id;
       var poster;
       if (response.poster_path != null) {
         poster = $("<img id='poster'></img>")
           .attr("src", tmdbApi.posterUrl(response))
           // .attr("class", "img-responsive");
-        console.log(tmdbApi.posterUrl(response));
       } else {
         poster = $("<p>No poster to display</p>");
       }
 
       var year = $("<h6 id='panel-year'></h6>").text(response.release_date.slice(0, 4));
 
-      var title = $("<h5 id='panel-title'></h5>").text(response.title.toUpperCase());
+      var title = $("<h6 id='panel-title'></h6>").text(response.title.toUpperCase());
 
       var overview = $("<p id='panel-overview'></p>").text(response.overview);
 
@@ -151,9 +147,6 @@ function fetchMovie(id) {
         .attr("class", "panel panel-default")
         .append([poster, title, year, overview]);
 
-      // var sidebarView = $("<div></div>")
-      //   .attr("class", "panel panel-default")
-      //   .append([poster, sidebarBody]);
               // TODO checkout bootstrap panels
 
       $("#movie-info").append(sidebarView);
@@ -231,8 +224,6 @@ function search() {
                 });
               }
             }
-
-            console.log(titleList);
             response(titleList);
           });
         }
