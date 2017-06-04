@@ -128,31 +128,32 @@ function fetchMovie(id) {
       if (response.poster_path != null) {
         poster = $("<img id='poster'></img>")
           .attr("src", tmdbApi.posterUrl(response))
-          .attr("class", "img-responsive");
+          // .attr("class", "img-responsive");
         console.log(tmdbApi.posterUrl(response));
       } else {
         poster = $("<p>No poster to display</p>");
       }
 
-      var title = $("<h6></h6>").text(response.title);
+      var year = $("<h6 id='panel-year'></h6>").text(response.release_date.slice(0, 4));
 
-      var year = $("<h6></h6>").text(response.release_date.slice(0, 4));
+      var title = $("<h5 id='panel-title'></h5>").text(response.title.toUpperCase());
 
-      var overview = $("<p></p>").text(response.overview);
+      var overview = $("<p id='panel-overview'></p>").text(response.overview);
 
       // var locationDiv =
       // $("<div id='location-div'></div>");
 
       // var locations = getShootingLocations();
 
-      var sidebarBody = $("<div></div>")
+      var sidebarView = $("<div></div>")
         .attr("class", "panel-body")
         // .attr("width", "50%")
-        .append([title, year, overview]);
-
-      var sidebarView = $("<div></div>")
         .attr("class", "panel panel-default")
-        .append([poster, sidebarBody]);
+        .append([poster, title, year, overview]);
+
+      // var sidebarView = $("<div></div>")
+      //   .attr("class", "panel panel-default")
+      //   .append([poster, sidebarBody]);
               // TODO checkout bootstrap panels
 
       $("#movie-info").append(sidebarView);

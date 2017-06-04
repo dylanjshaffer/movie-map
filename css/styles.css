@@ -10,21 +10,10 @@ html, body {
    height: 100%;
 }
 
-/*.row {
-   width: 100%;
-}*/
-
-/*#panel-container {
-   height: 100%;
-   position: absolute;
-   left: 0;
-   z-index: 1;
-}*/
-
 #panel {
    height: 100%;
-   background: #e2e2e2;
-   opacity: 0.9;
+   /*background: #e2e2e2;
+   opacity: 0.9;*/
    float: left;
    width: 250px;
    max-width: 250px;
@@ -41,21 +30,47 @@ html, body {
    width: 95%;
 }
 
+#panel-title {
+   background-color: white;
+   opacity: 0.9;
+   width: fit-content;
+   margin: auto;
+   border: 1px solid grey;
+   border-radius: 5px;
+}
+
+#panel-year {
+   background-color: white;
+   opacity: 0.9;
+   width: fit-content;
+   border: 1px solid grey;
+   border-radius: 5px;
+   margin-top: 5px;
+}
+
+#panel-overview {
+   background-color: white;
+   opacity: 0.9;
+   width: fit-content;
+   border: 1px solid grey;
+   border-radius: 5px;
+}
+
 #search-options {
    padding-top: 50px;
 }
 
 #poster {
    margin: auto;
-   max-width: 225px;
+   width: 100%;
+   margin-bottom: 10px;
+   border: 1px solid grey;
+   border-radius: 5px;
 }
 
-/*#front-page {
-    margin: 0 auto;
-}*/
 
 #click {
-   height: 40px;
+   height: auto;
    width: auto;
    /*background: grey;*/
    float: left;
@@ -74,28 +89,6 @@ html, body {
    max-width:100%;
 }
 
-/*iframe {
-   height:100%;
-   width: 100%;
-   border: 0;
-}*/
-
-
-/*#map-canvas {
-   margin:0;
-   padding: 0;
-   position: absolute !important;
-   background: grey;
-   top: 0px;
-   right: 0;
-   bottom: 0 !important;
-   left: 0 !important;
-   float: left;
-   height: 100%;
-   width: 100%;
-   max-width: 100%;
-}*/
-
 #gmap3 {
    padding: 0;
    position: absolute !important;
@@ -110,17 +103,6 @@ html, body {
    float: left;
 }
 
-
-/*#floating-sidebar {
-    float: right;
-    width: 20%;
-    position: absolute;
-    top: 90px;
-    left: 5%;
-    z-index: 5;
-    padding: 0px;
-    display: none;
-    background-color: #e2e2e2;
-    border: 1px solid #000000;
-    text-align: center;
+/*#front-page {
+margin: 0 auto;
 }*/
