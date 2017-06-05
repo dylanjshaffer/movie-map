@@ -9,6 +9,7 @@ var model = {
   currentLocation: "Chicago",
   currentLocations: [],
   locationInfo: [],
+  markerArray: [],
   zoom: 4
 };
 
@@ -40,11 +41,16 @@ function getShootingLocations() {
       // TODO WHY DOESN'T THIS WORK ANYMORE??
       var movie = response.data.movies[0];
       if (movie.filmingLocations !== undefined) {
-        var title = movie.title;
+
+        // var title = movie.title;
         // var addresses = [];
         // var remarks = [];
         movie.filmingLocations.forEach( function(index) {
-          model.locationInfo.push({address: index.location, remarks: index.remarks});
+          if (index.remarks) {
+            model.locationInfo.push({address: index.location, remarks: index.remarks});
+          } else {
+            model.locationInfo.push({address: index.location, remarks: "No scene information available"});
+          }
           // addresses.push(index.location);
           // remarks.push(index.remarks);
         });
@@ -60,11 +66,10 @@ function getShootingLocations() {
             zoom: model.zoom
           })
           .marker(function() {
-            var markerArray=[];
             for (var i=0; i<model.locationInfo.length; i++) {
-              markerArray.push({address: model.locationInfo[i].address, title: model.locationInfo[i].address});
+              model.markerArray.push({address: model.locationInfo[i].address, title: model.locationInfo[i].address});
             };
-            return markerArray;
+            return model.markerArray;
           })
           .wait(2000)
           .fit()
@@ -75,16 +80,16 @@ function getShootingLocations() {
           })
           .then(function(infowindow) {
             var map = this.get(0);
-            var markers = this.get(1);
+            var markers = this.get(2);
+            var locationDiv = $('<div id="location-div"></div>');
             // for (var i=0; i<markers.length; i++) {
             markers.forEach(function(marker){
               console.log(marker);
               marker.addListener('mouseover', function() {
-
                 model.locationInfo.forEach(function(locationObj){
                   if (locationObj.address === marker.title) {
-                    var locationWinContent = $("<p>" + locationObj.address + "</p><p>" + locationObj.remarks + "</p>");
-                    $("#location-div").append(locationWinContent);
+                    var locationWinContent = "<p>" + locationObj.address + "</p><p>" + locationObj.remarks + "</p>";
+                    locationDiv.append(locationWinContent);
                     infowindow.setContent(locationWinContent);
                   }
                   // TODO map windows to markers
@@ -111,6 +116,7 @@ function fetchMovie(id) {
   model.windows = [];
   model.currentLocations = [];
   model.locationInfo = [];
+  model.markerArray = [];
   $("#movie-info").empty();
 
 
@@ -167,16 +173,16 @@ function initMap() {
     .gmap3({
       address: model.currentLocation,
       zoom: model.zoom,
-      mapTypeId: "Bluewater",
+      mapTypeId: "Choose Theme",
       mapTypeControlOptions: {
-        mapTypeIds: ["Bluewater"],
+        mapTypeIds: ["Choose Theme"],
         style: google.maps.MapTypeControlStyle.HORIZONTAL_BAR,
         position: google.maps.ControlPosition.TOP_CENTER
       },
       streetViewControl: false
     })
     .styledmaptype(
-      "Bluewater",
+      "Choose Theme",
       [
         {"featureType": "administrative","elementType": "labels.text.fill","stylers": [{"color": "#444444"}]},
         {"featureType": "landscape","elementType": "all","stylers": [{"color": "#f2f2f2"}]},
@@ -187,7 +193,7 @@ function initMap() {
         {"featureType": "transit","elementType": "all","stylers": [{"visibility": "off"}]},
         {"featureType": "water","elementType": "all","stylers": [{"color": "#46bcec"},{"visibility": "on"}]}
       ],
-      {name: "Bluewater"}
+      {name: "Choose Theme"}
     )
     // .cluster({
     //   size: 50,

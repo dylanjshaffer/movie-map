@@ -46,7 +46,7 @@ html, body {
    width: fit-content;
    border: 1px solid grey;
    border-radius: 5px;
-   margin: auto;
+   /*margin: auto;*/
    margin-top: 5px;
    padding: 3px;
 }
