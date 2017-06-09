@@ -2,17 +2,18 @@
 // MODEL & HELPERS
 
 var model = {
-  map: $("#gmap3"),
   zoom: 4,
   windows: [],
+  activeWindow: null,
   imdbID: "",
   tmdbID: "",
   currentLocation: "Chicago",
   locationInfo: [],
   markerArray: [],
-  markers: []
-  // currentLocations: [],
+  markers: [],
 };
+
+// var map;
 
 var myApiFilms = {
   root: "http://www.myapifilms.com/imdb/idIMDB",
@@ -80,28 +81,39 @@ function getShootingLocations() {
           })
           .then(function(infowindow) {
             var map = this.get(0);
-            var markers = this.get(2);
+            model.markers = this.get(2);
             var locationDiv = $('<div id="location-div"></div>');
             // for (var i=0; i<markers.length; i++) {
-            markers.forEach(function(marker) {
-              model.markers.push(marker);
+            model.markers.forEach(function(marker) {
               console.log(marker);
-              marker.addListener('mouseover', function() {
-                model.locationInfo.forEach(function(locationObj){
-                  if (locationObj.address === marker.title) {
-                    var locationWinContent = "<p>" + locationObj.address + "</p><p>" + locationObj.remarks + "</p>";
-                    locationDiv.append(locationWinContent);
-                    infowindow.setContent(locationWinContent);
-                  }
+              // marker.addListener('mouseover', function() {
+              //   model.locationInfo.forEach(function(locationObj){
+              //     if (locationObj.address === marker.title) {
+              //       var locationWinContent = "<p>" + locationObj.address + "</p><p>" + locationObj.remarks + "</p>";
+              //       locationDiv.append(locationWinContent);
+              //       infowindow.setContent(locationWinContent);
+              //     }
                   // TODO map windows to markers
-                  marker.addListener('click', function() {
-                    infowindow.open(map, marker);
+                marker.addListener('click', function() {
+
+                  model.locationInfo.forEach(function(locationObj){
+                    if (model.activeWindow != null) {
+                      model.activeWindow.close();
+                    }
+                    if (locationObj.address === marker.title) {
+                      var locationWinContent = "<p>" + locationObj.address + "</p><p>" + locationObj.remarks + "</p>";
+                      locationDiv.append(locationWinContent);
+                      infowindow.setContent(locationWinContent);
+                      model.activeWindow = infowindow;
+                    }
+                  infowindow.open(map, marker);
                   });
 
-              });
+                });
+                // });
+              // });
             });
           });
-        });
       } else {
         console.log("No locations");
       }
@@ -247,13 +259,14 @@ function search() {
       event.preventDefault();
       $("#search-term").val(ui.item.label);
       model.currentFilm = ui.item.value;
-      fetchMovie(model.currentFilm);
+
+      fetchMovie();
     }
   });
-  initMap();
 };
 
 $(document).ready(function(){
+  initMap();
   search();
 });
 
