@@ -2,15 +2,16 @@
 // MODEL & HELPERS
 
 var model = {
-  map: document.getElementById("gmap3"),
+  map: $("#gmap3"),
+  zoom: 4,
   windows: [],
   imdbID: "",
   tmdbID: "",
   currentLocation: "Chicago",
-  currentLocations: [],
   locationInfo: [],
   markerArray: [],
-  zoom: 4
+  markers: []
+  // currentLocations: [],
 };
 
 var myApiFilms = {
@@ -76,14 +77,14 @@ function getShootingLocations() {
             // TODO attach correct model.windows to each marker
           .infowindow({
             // content: "",
-            maxWidth: 250
           })
           .then(function(infowindow) {
             var map = this.get(0);
             var markers = this.get(2);
             var locationDiv = $('<div id="location-div"></div>');
             // for (var i=0; i<markers.length; i++) {
-            markers.forEach(function(marker){
+            markers.forEach(function(marker) {
+              model.markers.push(marker);
               console.log(marker);
               marker.addListener('mouseover', function() {
                 model.locationInfo.forEach(function(locationObj){
@@ -112,21 +113,26 @@ function getShootingLocations() {
   });
 };
 
-function fetchMovie(id) {
+function fetchMovie() {
   model.windows = [];
   model.currentLocations = [];
   model.locationInfo = [];
   model.markerArray = [];
+  model.markers.forEach(function(marker){
+    marker.setMap(null);
+  })
+  model.markers = [];
   $("#movie-info").empty();
 
 
   $.ajax({
-    url: tmdbApi.root + "/movie/"+ id,
+    url: tmdbApi.root + "/movie/"+ model.currentFilm,
     data: {
       api_key: tmdbApi.token
     },
     success: function(response) {
       model.imdbID = response.imdb_id;
+      getShootingLocations();
       var poster;
       if (response.poster_path != null) {
         poster = $("<img id='poster'></img>")
@@ -225,7 +231,7 @@ function search() {
             if (movie.title.toLowerCase().indexOf(request.term) === 0) {
               if (movie.poster_path != null) {
                 titleList.push({
-                  label: movie.title + "   (" + movie.release_date.slice(0,4) + ")",
+                  label: movie.title + " (" + movie.release_date.slice(0,4) + ")",
                   value: movie.id
                 });
               }
@@ -239,7 +245,7 @@ function search() {
     autoFocus: true,
     select: function(event, ui) {
       event.preventDefault();
-      $("#search-term").val(ui.item.label.slice(0, ui.item.label.length - 6));
+      $("#search-term").val(ui.item.label);
       model.currentFilm = ui.item.value;
       fetchMovie(model.currentFilm);
     }
