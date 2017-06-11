@@ -29,6 +29,13 @@ var tmdbApi = {
   }
 };
 
+function getMarkers() {
+  model.markers = [];
+  for (var i=0; i<model.locationInfo.length; i++) {
+    model.markerArray.push({address: model.locationInfo[i].address, title: model.locationInfo[i].address});
+  };
+  return model.markerArray;
+};
 
 function getShootingLocations() {
   // very slow
@@ -43,12 +50,10 @@ function getShootingLocations() {
       var movie = response.data.movies[0];
       if (movie.filmingLocations !== undefined) {
         movie.filmingLocations.forEach( function(index) {
-          if (index.location.length > 10) {
-            if (index.remarks) {
-              model.locationInfo.push({address: index.location, remarks: index.remarks});
-            } else {
-              model.locationInfo.push({address: index.location, remarks: "No scene information available"});
-            }
+          if (index.remarks) {
+            model.locationInfo.push({address: index.location, remarks: index.remarks});
+          } else {
+            model.locationInfo.push({address: index.location, remarks: "No scene information available"});
           }
         });
 
@@ -57,13 +62,7 @@ function getShootingLocations() {
           .gmap3({
             zoom: model.zoom
           })
-          .marker(function() {
-            model.markers = [];
-            for (var i=0; i<model.locationInfo.length; i++) {
-              model.markerArray.push({address: model.locationInfo[i].address, title: model.locationInfo[i].address});
-            };
-            return model.markerArray;
-          })
+          .marker(getMarkers)
           .then(function(markers) {
             model.markers = markers;
           })
@@ -130,6 +129,7 @@ function fetchMovie() {
         poster = $("<p>No poster to display</p>");
       }
 
+      console.log(response.production_countries);
       var year = $("<h6 id='panel-year'></h6>").text(response.release_date.slice(0, 4));
 
       var title = $("<h6 id='panel-title'></h6>").text(response.title.toUpperCase());
@@ -188,7 +188,7 @@ function search() {
 
   var titleList;
 
-  $("#click").click(function(){
+  $("#search-options").click(function(){
     $("#panel").slideToggle(250);
   });
 
