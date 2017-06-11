@@ -3,17 +3,17 @@
 
 var model = {
   zoom: 4,
-  windows: [],
   activeWindow: null,
   imdbID: "",
   tmdbID: "",
   currentLocation: "Chicago",
   locationInfo: [],
   markerArray: [],
-  markers: [],
+  markers: []
 };
 
-// var map;
+var locationDiv;
+var map;
 
 var myApiFilms = {
   root: "http://www.myapifilms.com/imdb/idIMDB",
@@ -40,27 +40,17 @@ function getShootingLocations() {
       filmingLocations: "2"
     },
     success: function(response) {
-      // TODO WHY DOESN'T THIS WORK ANYMORE??
       var movie = response.data.movies[0];
       if (movie.filmingLocations !== undefined) {
-
-        // var title = movie.title;
-        // var addresses = [];
-        // var remarks = [];
         movie.filmingLocations.forEach( function(index) {
-          if (index.remarks) {
-            model.locationInfo.push({address: index.location, remarks: index.remarks});
-          } else {
-            model.locationInfo.push({address: index.location, remarks: "No scene information available"});
+          if (index.location.length > 10) {
+            if (index.remarks) {
+              model.locationInfo.push({address: index.location, remarks: index.remarks});
+            } else {
+              model.locationInfo.push({address: index.location, remarks: "No scene information available"});
+            }
           }
-          // addresses.push(index.location);
-          // remarks.push(index.remarks);
         });
-        // model.currentLocations = addresses;
-        // model.locationInfo.map(
-        //   {title: title,
-        //   address: addresses,
-        //   remarks: remarks}
 
 
         $("#gmap3")
@@ -68,52 +58,43 @@ function getShootingLocations() {
             zoom: model.zoom
           })
           .marker(function() {
+            model.markers = [];
             for (var i=0; i<model.locationInfo.length; i++) {
               model.markerArray.push({address: model.locationInfo[i].address, title: model.locationInfo[i].address});
             };
             return model.markerArray;
           })
+          .then(function(markers) {
+            model.markers = markers;
+          })
           .wait(2000)
           .fit()
-            // TODO attach correct model.windows to each marker
           .infowindow({
-            // content: "",
+            content: ""
           })
           .then(function(infowindow) {
-            var map = this.get(0);
-            model.markers = this.get(2);
-            var locationDiv = $('<div id="location-div"></div>');
-            // for (var i=0; i<markers.length; i++) {
+            map = this.get(0);
+            locationDiv = $('<div id="location-div"></div>');
             model.markers.forEach(function(marker) {
               console.log(marker);
-              // marker.addListener('mouseover', function() {
-              //   model.locationInfo.forEach(function(locationObj){
-              //     if (locationObj.address === marker.title) {
-              //       var locationWinContent = "<p>" + locationObj.address + "</p><p>" + locationObj.remarks + "</p>";
-              //       locationDiv.append(locationWinContent);
-              //       infowindow.setContent(locationWinContent);
-              //     }
-                  // TODO map windows to markers
-                marker.addListener('click', function() {
 
-                  model.locationInfo.forEach(function(locationObj){
-                    if (model.activeWindow != null) {
-                      model.activeWindow.close();
-                    }
-                    if (locationObj.address === marker.title) {
-                      var locationWinContent = "<p>" + locationObj.address + "</p><p>" + locationObj.remarks + "</p>";
-                      locationDiv.append(locationWinContent);
-                      infowindow.setContent(locationWinContent);
-                      model.activeWindow = infowindow;
-                    }
+              marker.addListener('click', function() {
+
+                model.locationInfo.forEach(function(locationObj){
+                  if (model.activeWindow != null) {
+                    model.activeWindow.close();
+                  }
+                  if (locationObj.address === marker.title) {
+                    var locationWinContent = "<p>" + locationObj.address + "</p><p>" + locationObj.remarks + "</p>";
+                    locationDiv.append(locationWinContent);
+                    infowindow.setContent(locationWinContent);
+                    model.activeWindow = infowindow;
+                  }
                   infowindow.open(map, marker);
-                  });
-
                 });
-                // });
-              // });
+              });
             });
-          });
+          })
       } else {
         console.log("No locations");
       }
@@ -121,19 +102,15 @@ function getShootingLocations() {
     error: function(err) {
       console.log(err);
     }
-// initMap();
   });
 };
 
 function fetchMovie() {
-  model.windows = [];
-  model.currentLocations = [];
   model.locationInfo = [];
   model.markerArray = [];
   model.markers.forEach(function(marker){
     marker.setMap(null);
-  })
-  model.markers = [];
+  });
   $("#movie-info").empty();
 
 
@@ -149,7 +126,6 @@ function fetchMovie() {
       if (response.poster_path != null) {
         poster = $("<img id='poster'></img>")
           .attr("src", tmdbApi.posterUrl(response))
-          // .attr("class", "img-responsive");
       } else {
         poster = $("<p>No poster to display</p>");
       }
@@ -160,21 +136,14 @@ function fetchMovie() {
 
       var overview = $("<p id='panel-overview'></p>").text(response.overview);
 
-      // var locationDiv =
-      // $("<div id='location-div'></div>");
-
-      // var locations = getShootingLocations();
-
       var sidebarView = $("<div></div>")
         .attr("class", "panel-body")
-        // .attr("width", "50%")
         .attr("class", "panel panel-default")
         .append([poster, title, year, overview]);
 
               // TODO checkout bootstrap panels
 
       $("#movie-info").append(sidebarView);
-      // model.windows.push(sidebarView);
     },
     error: function(err) {
       console.log(err);
@@ -185,8 +154,7 @@ function fetchMovie() {
 
 // DOM Event Handlers
 function initMap() {
-  // model.currentLocations = [];
-  // markerLocations();
+
   $("#gmap3")
     .gmap3({
       address: model.currentLocation,
@@ -213,8 +181,6 @@ function initMap() {
       ],
       {name: "Choose Theme"}
     )
-    // .cluster({
-    //   size: 50,
 };
 
 
@@ -223,7 +189,6 @@ function search() {
   var titleList;
 
   $("#click").click(function(){
-    // $("#panel").animate({width:"toggle"}, 250);
     $("#panel").slideToggle(250);
   });
 
