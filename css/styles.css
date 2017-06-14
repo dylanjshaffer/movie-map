@@ -17,6 +17,13 @@ h1 {
    height: 100%;
 }
 
+.gm-style-iw {
+    width: 200px;
+    top: 0;
+    left: 0;
+    border-radius: 5px 5px 5px 5px;;
+}
+
 #panel {
    height: 80%;
    padding-top: 40px;
@@ -62,6 +69,8 @@ h1 {
 #panel-overview {
    background-color: white;
    opacity: 0.9;
+   font-size: 1em;
+   line-height: 100%;
    width: fit-content;
    border: 1px solid grey;
    border-radius: 5px;
@@ -75,11 +84,15 @@ h1 {
 }
 #search-options {
    position: absolute;
-   margin-left: 10px;
+   /*margin-left: 10px;*/
    /*padding-top: 50px;*/
    /*height: auto;*/
    z-index: 3;
 }
+
+/*#search-term {
+
+}*/
 
 #poster {
    margin: auto;

@@ -90,6 +90,9 @@ function getShootingLocations() {
                     model.activeWindow = infowindow;
                   }
                   infowindow.open(map, marker);
+                  map.addListener('click', function() {
+                    infowindow.close();
+                  });
                 });
               });
             });
