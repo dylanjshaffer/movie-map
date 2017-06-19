@@ -29,13 +29,13 @@ var tmdbApi = {
   }
 };
 
-function getMarkers() {
-  model.markers = [];
-  for (var i=0; i<model.locationInfo.length; i++) {
-    model.markerArray.push({address: model.locationInfo[i].address, title: model.locationInfo[i].address});
-  };
-  return model.markerArray;
-};
+// function getMarkers() {
+//   model.markers = [];
+//   for (var i=0; i<model.locationInfo.length; i++) {
+//     model.markerArray.push({address: model.locationInfo[i].address, title: model.locationInfo[i].address});
+//   };
+//   return model.markerArray;
+// };
 
 function getShootingLocations() {
   // very slow
@@ -147,6 +147,9 @@ function fetchMovie() {
               // TODO checkout bootstrap panels
 
       $("#movie-info").append(sidebarView);
+      $("#panel").slideDown(250);
+
+
     },
     error: function(err) {
       console.log(err);
@@ -191,9 +194,9 @@ function search() {
 
   var titleList;
 
-  $("#search-options").click(function(){
-    $("#panel").slideToggle(250);
-  });
+  // $("#search-options").click(function(){
+  //   $("#panel").slideToggle(250);
+  // });
 
   $("#search-term").autocomplete({
     source: function(request, response) {
@@ -233,45 +236,43 @@ function search() {
   });
 };
 
+
+// TODO DELAY BETWEEN GEOCODE REQUESTS
+
+function getMarkers() {
+  model.markers = [];
+  for (var i=0; i<model.locationInfo.length; i++) {
+    var currentLocation = model.locationInfo[i].address;
+    getCoordinates(currentLocation);
+  };
+  return model.markerArray;
+};
+
+
+function getCoordinates(loc) {
+  $.ajax({
+    url: "https://maps.googleapis.com/maps/api/geocode/json?key=AIzaSyBH1GdmBFyhL3U_AqZLzMk_iQl5NXuU-Mc&address=" + loc,
+    async: false,
+    success: function(response) {
+      console.log(response.results);
+      console.log(response.results[0].geometry.location);
+      var isRealLocation = (response.results.length > 0);
+      if (!isRealLocation) {
+        console.log("not real");
+      } else {
+        var coordinates = response.results[0].geometry.location;
+        model.markerArray.push({position:[coordinates.lat, coordinates.lng], title: loc});
+
+        console.log(model.markerArray);
+      }
+    },
+    error: function(err) {
+      console.log(err);
+    }
+  });
+}
+
 $(document).ready(function(){
   initMap();
   search();
 });
-
-
-// function goToCoordinates(location) {
-//
-//   $.ajax({
-//     url: "https://maps.googleapis.com/maps/api/geocode/json?key=AIzaSyBH1GdmBFyhL3U_AqZLzMk_iQl5NXuU-Mc&address=" + location,
-//     success: function(response) {
-//       // console.log(response.results[0].geometry.location);
-//       var isRealLocation = response.results.length > 0;
-//       if (!isRealLocation) {
-//         // TODO DISPLAY ERROR
-//       } else {
-//         var coordinates = response.results[0].geometry.location;
-//         model.currentLocation = {
-//           lat: coordinates.lat,
-//           lng: coordinates.lng
-//         };
-//         console.log(model.currentLocation);
-//
-//         changeCenter(model.currentLocation);
-//       }
-//     },
-//     error: function(err) {
-//       console.log(err);
-//     }
-//   });
-// }
-
-
-// Map
-
-// function changeCenter(center) {
-//   $("#gmap3").gmap3.setCenter(center);
-//   $("#gmap3").gmap3.setZoom(11);
-// may not need above function, but keep TODO
-
-// TODO set zoom based on location Info
-  // low for countries, 11 for cities, high for street level. Write function that takes searchTerms and determines location type(country, city, zip, street level address, etc)
