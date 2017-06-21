@@ -14,6 +14,7 @@ var model = {
 
 var locationDiv;
 var map;
+var bounds;
 
 var myApiFilms = {
   root: "http://www.myapifilms.com/imdb/idIMDB",
@@ -28,14 +29,6 @@ var tmdbApi = {
     return baseImageUrl + movie.backdrop_path;
   }
 };
-
-// function getMarkers() {
-//   model.markers = [];
-//   for (var i=0; i<model.locationInfo.length; i++) {
-//     model.markerArray.push({address: model.locationInfo[i].address, title: model.locationInfo[i].address});
-//   };
-//   return model.markerArray;
-// };
 
 function getShootingLocations() {
   // very slow
@@ -64,15 +57,19 @@ function getShootingLocations() {
           })
           .marker(getMarkers)
           .then(function(markers) {
+            map = this.get(0);
+            bounds = new google.maps.LatLngBounds();
             model.markers = markers;
+            for (var i in model.markers) {
+              bounds.extend(markers[i].getPosition());
+            }
+            map.fitBounds(bounds);
           })
-          .wait(2000)
-          .fit()
+
           .infowindow({
             content: ""
           })
           .then(function(infowindow) {
-            map = this.get(0);
             locationDiv = $('<div id="location-div"></div>');
             model.markers.forEach(function(marker) {
               console.log(marker);
@@ -97,6 +94,8 @@ function getShootingLocations() {
               });
             });
           })
+          // .wait(2000)
+          // .fit()
       } else {
         console.log("No locations");
       }
@@ -132,7 +131,6 @@ function fetchMovie() {
         poster = $("<p>No poster to display</p>");
       }
 
-      console.log(response.production_countries);
       var year = $("<h6 id='panel-year'></h6>").text(response.release_date.slice(0, 4));
 
       var title = $("<h6 id='panel-title'></h6>").text(response.title.toUpperCase());
