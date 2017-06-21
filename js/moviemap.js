@@ -163,16 +163,17 @@ function initMap() {
     .gmap3({
       address: model.currentLocation,
       zoom: model.zoom,
-      mapTypeId: "Choose Theme",
-      mapTypeControlOptions: {
-        mapTypeIds: ["Choose Theme"],
-        style: google.maps.MapTypeControlStyle.HORIZONTAL_BAR,
-        position: google.maps.ControlPosition.TOP_CENTER
-      },
+      mapTypeId: "Default",
+      mapTypeControl: false,
+      // mapTypeControlOptions: {
+      //   mapTypeIds: ["Default"],
+      //   style: google.maps.MapTypeControlStyle.HORIZONTAL_BAR,
+      //   position: google.maps.ControlPosition.TOP_CENTER
+      // },
       streetViewControl: false
     })
     .styledmaptype(
-      "Choose Theme",
+      "Default",
       [
         {"featureType": "administrative","elementType": "labels.text.fill","stylers": [{"color": "#444444"}]},
         {"featureType": "landscape","elementType": "all","stylers": [{"color": "#f2f2f2"}]},
@@ -183,8 +184,19 @@ function initMap() {
         {"featureType": "transit","elementType": "all","stylers": [{"visibility": "off"}]},
         {"featureType": "water","elementType": "all","stylers": [{"color": "#46bcec"},{"visibility": "on"}]}
       ],
-      {name: "Choose Theme"}
+      {name: "Default"}
     )
+    // .marker({
+    //   address: "chicago",
+    //   icon: {
+    //     path: fontawesome.markers.VIDEO_CAMERA,
+    //     scale: 0.35,
+    //     strokeWeight: 1,
+    //     strokeColor: "black",
+    //     fillColor: "#b60f0f",
+    //     fillOpacity: 1
+    //   }
+    // })
 };
 
 
@@ -235,8 +247,6 @@ function search() {
 };
 
 
-// TODO DELAY BETWEEN GEOCODE REQUESTS
-
 function getMarkers() {
   model.markers = [];
   for (var i=0; i<model.locationInfo.length; i++) {
@@ -259,7 +269,18 @@ function getCoordinates(loc) {
         console.log("not real");
       } else {
         var coordinates = response.results[0].geometry.location;
-        model.markerArray.push({position:[coordinates.lat, coordinates.lng], title: loc});
+        model.markerArray.push({
+          position:[coordinates.lat, coordinates.lng],
+          title: loc,
+          icon: {
+            path: fontawesome.markers.VIDEO_CAMERA,
+            scale: 0.35,
+            strokeWeight: 1,
+            strokeColor: "white",
+            fillColor: "black",
+            fillOpacity: 1
+          }
+        });
 
         console.log(model.markerArray);
       }
