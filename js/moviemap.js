@@ -1,5 +1,5 @@
 
-// MODEL & HELPERS
+// MODEL
 
 var model = {
   zoom: 4,
@@ -16,6 +16,8 @@ var locationDiv;
 var map;
 var bounds;
 
+// APIs
+
 var myApiFilms = {
   root: "http://www.myapifilms.com/imdb/idIMDB",
   token: "54e5c6a2-c810-4e71-9f78-a376db353394"
@@ -30,8 +32,64 @@ var tmdbApi = {
   }
 };
 
+
+// HELPERS
+
+function getMarkers() {
+  model.markers = [];
+  for (var i=0; i<model.locationInfo.length; i++) {
+    var currentLocation = model.locationInfo[i].address;
+    getCoordinates(currentLocation);
+  };
+  return model.markerArray;
+};
+
+
+function getCoordinates(loc) {
+  $.ajax({
+    url: "https://maps.googleapis.com/maps/api/geocode/json?key=AIzaSyBH1GdmBFyhL3U_AqZLzMk_iQl5NXuU-Mc&address=" + loc,
+    // TODO async:false is deprecated
+    async: false,
+    success: function(response) {
+      console.log(response.results);
+      console.log(response.results[0].geometry.location);
+      var isRealLocation = (response.results.length > 0);
+      if (!isRealLocation) {
+        console.log("not real");
+      } else {
+        var coordinates = response.results[0].geometry.location;
+        model.markerArray.push({
+          position:[coordinates.lat, coordinates.lng],
+          title: loc,
+          icon: {
+            path: fontawesome.markers.VIDEO_CAMERA,
+            scale: 0.35,
+            strokeWeight: 1,
+            strokeColor: "white",
+            fillColor: "black",
+            fillOpacity: 1
+          }
+        });
+
+        console.log(model.markerArray);
+      }
+    },
+    error: function(err) {
+      console.log(err);
+    }
+  });
+}
+
+
+function streetView(loc) {
+  var streetViewUrl = 'https://maps.googleapis.com/maps/api/streetview?size=200x100&location=' + loc;
+  var streetViewContainer = $('<img src="' + streetViewUrl + '"/>');
+  return streetViewContainer;
+};
+
+
 function getShootingLocations() {
-  // very slow
+  // API is very slow
   $.ajax({
     url: myApiFilms.root,
     data: {
@@ -70,7 +128,7 @@ function getShootingLocations() {
             content: ""
           })
           .then(function(infowindow) {
-            locationDiv = $('<div id="location-div"></div>');
+
             model.markers.forEach(function(marker) {
               console.log(marker);
 
@@ -81,9 +139,17 @@ function getShootingLocations() {
                     model.activeWindow.close();
                   }
                   if (locationObj.address === marker.title) {
-                    var locationWinContent = "<p>" + locationObj.address + "</p><p>" + locationObj.remarks + "</p>";
-                    locationDiv.append(locationWinContent);
-                    infowindow.setContent(locationWinContent);
+                    var streetViewImg = streetView(locationObj.address);
+
+                    var address = $("<p></p>").text(locationObj.address);
+
+                    var remarks = $("<p></p>").text(locationObj.remarks);
+
+                    var locationWinContent = $("<div></div>")
+                      .attr("id", "location-div")
+                      .append([address, remarks, streetViewImg[0]]);
+                    console.log(locationWinContent);
+                    infowindow.setContent(locationWinContent[0]);
                     model.activeWindow = infowindow;
                   }
                   infowindow.open(map, marker);
@@ -105,6 +171,7 @@ function getShootingLocations() {
     }
   });
 };
+
 
 function fetchMovie() {
   model.locationInfo = [];
@@ -156,7 +223,8 @@ function fetchMovie() {
 };
 
 
-// DOM Event Handlers
+// MAP
+
 function initMap() {
 
   $("#gmap3")
@@ -186,6 +254,8 @@ function initMap() {
       ],
       {name: "Default"}
     )
+    // test marker
+
     // .marker({
     //   address: "chicago",
     //   icon: {
@@ -199,6 +269,7 @@ function initMap() {
     // })
 };
 
+// DOM Event Handlers
 
 function search() {
 
@@ -221,7 +292,7 @@ function search() {
           titleList=[];
           var movies = respObj.results;
           movies.forEach(function(movie){
-            if (movie.title.toLowerCase().indexOf(request.term) === 0) {
+            if (movie.title.toLowerCase().indexOf(request.term.toLowerCase()) === 0) {
               if (movie.poster_path != null) {
                 titleList.push({
                   label: movie.title + " (" + movie.release_date.slice(0,4) + ")",
@@ -246,50 +317,6 @@ function search() {
   });
 };
 
-
-function getMarkers() {
-  model.markers = [];
-  for (var i=0; i<model.locationInfo.length; i++) {
-    var currentLocation = model.locationInfo[i].address;
-    getCoordinates(currentLocation);
-  };
-  return model.markerArray;
-};
-
-
-function getCoordinates(loc) {
-  $.ajax({
-    url: "https://maps.googleapis.com/maps/api/geocode/json?key=AIzaSyBH1GdmBFyhL3U_AqZLzMk_iQl5NXuU-Mc&address=" + loc,
-    async: false,
-    success: function(response) {
-      console.log(response.results);
-      console.log(response.results[0].geometry.location);
-      var isRealLocation = (response.results.length > 0);
-      if (!isRealLocation) {
-        console.log("not real");
-      } else {
-        var coordinates = response.results[0].geometry.location;
-        model.markerArray.push({
-          position:[coordinates.lat, coordinates.lng],
-          title: loc,
-          icon: {
-            path: fontawesome.markers.VIDEO_CAMERA,
-            scale: 0.35,
-            strokeWeight: 1,
-            strokeColor: "white",
-            fillColor: "black",
-            fillOpacity: 1
-          }
-        });
-
-        console.log(model.markerArray);
-      }
-    },
-    error: function(err) {
-      console.log(err);
-    }
-  });
-}
 
 $(document).ready(function(){
   initMap();
