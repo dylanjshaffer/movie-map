@@ -27,18 +27,16 @@
   <body>
 
     <div class="container-fluid map-container">
-      <div class="row">
         <!-- <div id="panel-container"> -->
-        <div id="search-container">
+      <div id="search-container">
 
-          <h1 style="background-color:white; border:1px solid grey;border-radius:5px;padding:3px;">onLocation</h1>
-          <br><br><br>
-          <div id="search-options">
-            <div class="ui-widget">
-              <input type="text" class="ui-autocomplete-input form-control" name="title" id="search-term" placeholder="Enter a movie title" autocomplete="off"/>
-            </div>
-            <div class="ui-widget" style="margin-top:2em; font-family:Arial">
-            </div>
+        <h1 style="background-color:white; border:1px solid grey;border-radius:5px;padding:3px;">onLocation</h1>
+        <!-- <br><br><br> -->
+        <div id="search-options">
+          <div class="ui-widget">
+            <input type="text" class="ui-autocomplete-input form-control" name="title" id="search-term" placeholder="Enter a movie title" autocomplete="off"/>
+          </div>
+          <div class="ui-widget" style="margin-top:2em; font-family:Arial">
           </div>
         </div>
         <div id="panel">
@@ -46,14 +44,14 @@
             <div id=movie-info></div>
           </div>
         </div>
+      </div>
 
+      <!-- </div> -->
+
+      <div class="map-canvas-container">
+        <!-- <div id="map-canvas"> -->
+        <div class="map" id="gmap3"></div>
         <!-- </div> -->
-
-        <div class="map-canvas-container">
-          <!-- <div id="map-canvas"> -->
-          <div class="map" id="gmap3"></div>
-          <!-- </div> -->
-        </div>
       </div>
     </div>
 

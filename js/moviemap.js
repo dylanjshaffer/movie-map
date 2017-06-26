@@ -81,11 +81,12 @@ function getCoordinates(loc) {
 }
 
 
-function streetView(loc) {
-  var streetViewUrl = 'https://maps.googleapis.com/maps/api/streetview?size=200x100&location=' + loc;
-  var streetViewContainer = $('<img src="' + streetViewUrl + '"/>');
-  return streetViewContainer;
-};
+// function streetView(loc) {
+//   var streetViewUrl = 'https://maps.googleapis.com/maps/api/streetview?size=200x100&location=' + loc;
+//   return streetViewUrl;
+//   var streetViewContainer = $('<img src="' + streetViewUrl + '"/>');
+//   return streetViewContainer;
+// };
 
 
 function getShootingLocations() {
@@ -104,7 +105,7 @@ function getShootingLocations() {
           if (index.remarks) {
             model.locationInfo.push({address: index.location, remarks: index.remarks});
           } else {
-            model.locationInfo.push({address: index.location, remarks: "No scene information available"});
+            model.locationInfo.push({address: index.location, remarks: ""});
           }
         });
 
@@ -129,6 +130,16 @@ function getShootingLocations() {
           })
           .then(function(infowindow) {
 
+            infowindow.addListener('domready', function(){
+              var iwOuter = $('.gm-style-iw');
+              var iwBackground = iwOuter.prev();
+              iwBackground.children(':nth-child(2)').css({'display':'none'});
+              iwBackground.children(':nth-child(4)').css({'display':'none'});
+              iwBackground.children(':nth-child(3)').find('div').children().css({'box-shadow': 'rgba(72, 181, 233, 0.6) 0px 1px 6px', 'z-index':'1'});
+              var iwCloseBtn = iwOuter.next();
+              iwCloseBtn.css({"display":"none"});
+            });
+
             model.markers.forEach(function(marker) {
               console.log(marker);
 
@@ -139,16 +150,18 @@ function getShootingLocations() {
                     model.activeWindow.close();
                   }
                   if (locationObj.address === marker.title) {
-                    var streetViewImg = streetView(locationObj.address);
+                    // var streetViewImg = streetView(locationObj.address);
+                    var streetViewUrl = 'https://maps.googleapis.com/maps/api/streetview?size=350x200&location=' + locationObj.address;
 
-                    var address = $("<p></p>").text(locationObj.address);
+                    var address = $("<p id='iw-address'></p>").text(locationObj.address);
 
-                    var remarks = $("<p></p>").text(locationObj.remarks);
+                    var remarks = $("<p id='iw-remarks'></p>").text(locationObj.remarks);
 
-                    var locationWinContent = $("<div></div>")
-                      .attr("id", "location-div")
-                      .append([address, remarks, streetViewImg[0]]);
+                    var locationWinContent = $("<div id=location-div></div>")
+                      .css("background-image", "url('" + streetViewUrl + "')")
+                      .append([address, remarks]);
                     console.log(locationWinContent);
+
                     infowindow.setContent(locationWinContent[0]);
                     model.activeWindow = infowindow;
                   }
@@ -198,16 +211,19 @@ function fetchMovie() {
         poster = $("<p>No poster to display</p>");
       }
 
+
       var year = $("<h6 id='panel-year'></h6>").text(response.release_date.slice(0, 4));
 
       var title = $("<h6 id='panel-title'></h6>").text(response.title.toUpperCase());
 
       var overview = $("<p id='panel-overview'></p>").text(response.overview);
 
+      var titleBar = $("<div></div>")
+        .attr("id", "title-bar")
+        .append([title, year])
+
       var sidebarView = $("<div></div>")
-        .attr("class", "panel-body")
-        .attr("class", "panel panel-default")
-        .append([poster, title, year, overview]);
+        .append([poster, titleBar, overview]);
 
               // TODO checkout bootstrap panels
 
@@ -232,28 +248,65 @@ function initMap() {
       address: model.currentLocation,
       zoom: model.zoom,
       mapTypeId: "Default",
-      mapTypeControl: false,
-      // mapTypeControlOptions: {
-      //   mapTypeIds: ["Default"],
-      //   style: google.maps.MapTypeControlStyle.HORIZONTAL_BAR,
-      //   position: google.maps.ControlPosition.TOP_CENTER
-      // },
+      mapTypeControl: true,
+      mapTypeControlOptions: {
+        mapTypeIds: ["Default", "Noir", "Western", "Sci-Fi"],
+        style: google.maps.MapTypeControlStyle.HORIZONTAL_BAR,
+        position: google.maps.ControlPosition.TOP_CENTER
+      },
       streetViewControl: false
     })
     .styledmaptype(
       "Default",
-      [
-        {"featureType": "administrative","elementType": "labels.text.fill","stylers": [{"color": "#444444"}]},
-        {"featureType": "landscape","elementType": "all","stylers": [{"color": "#f2f2f2"}]},
-        {"featureType": "poi","elementType": "all","stylers": [{"visibility": "off"}]},
-        {"featureType": "road","elementType": "all","stylers": [{"saturation": -100},{"lightness": 45}]},
-        {"featureType": "road.highway","elementType":"all","stylers": [{"visibility": "simplified"}]},
-        {"featureType": "road.arterial","elementType": "labels.icon","stylers": [{"visibility": "off"}]},
-        {"featureType": "transit","elementType": "all","stylers": [{"visibility": "off"}]},
-        {"featureType": "water","elementType": "all","stylers": [{"color": "#46bcec"},{"visibility": "on"}]}
-      ],
-      {name: "Default"}
-    )
+      [{"featureType": "administrative","elementType": "labels.text.fill","stylers": [{"color": "#444444"}]},
+      {"featureType": "landscape","elementType": "all","stylers": [{"color": "#f2f2f2"}]},
+      {"featureType": "poi","elementType": "all","stylers": [{"visibility": "off"}]},
+      {"featureType": "road","elementType": "all","stylers": [{"saturation": -100},{"lightness": 45}]},
+      {"featureType": "road.highway","elementType":"all","stylers": [{"visibility": "simplified"}]},
+      {"featureType": "road.arterial","elementType": "labels.icon","stylers": [{"visibility": "off"}]},
+      {"featureType": "transit","elementType": "all","stylers": [{"visibility": "off"}]},
+      {"featureType": "water","elementType": "all","stylers": [{"color": "#46bcec"},{"visibility": "on"}]}],
+      {name: "Default"})
+    .styledmaptype(
+      "Noir",
+      [{"featureType":"all","elementType":"all","stylers":[{"hue":"#ff0000"},{"saturation":-100},{"lightness":-30}]},
+      {"featureType":"all","elementType":"labels.text.fill","stylers":[{"color":"#ffffff"}]},       {"featureType":"all","elementType":"labels.text.stroke","stylers":[{"color":"#353535"}]},
+      {"featureType":"landscape","elementType":"geometry","stylers":[{"color":"#656565"}]},
+      {"featureType":"poi","elementType":"geometry.fill","stylers":[{"color":"#505050"}]},
+      {"featureType":"poi","elementType":"geometry.stroke","stylers":[{"color":"#808080"}]},
+      {"featureType":"road","elementType":"geometry","stylers":[{"color":"#454545"}]}],
+
+      {name: "Noir"})
+    .styledmaptype(
+      "Western",
+      [{"featureType":"landscape","elementType":"all","stylers":[{"hue":"#FFAD00"},{"saturation":50.2},{"lightness":-34.8},{"gamma":1}]},
+      {"featureType":"landscape.natural.landcover","elementType":"geometry.fill","stylers":[{"color":"#cbb42e"},{"visibility":"on"}]},
+      {"featureType":"poi","elementType":"all","stylers":[{"hue":"#FFC300"},{"saturation":54.2},{"lightness":-14.4},{"gamma":1}]},
+      {"featureType":"road.highway","elementType":"all","stylers":[{"hue":"#FFAD00"},{"saturation":-19.8},{"lightness":-1.8},{"gamma":1}]},
+      {"featureType":"road.arterial","elementType":"all","stylers":[{"hue":"#FFAD00"},{"saturation":72.4},{"lightness":-32.6},{"gamma":1}]},
+      {"featureType":"road.local","elementType":"all","stylers":[{"hue":"#FFAD00"},{"saturation":74.4},{"lightness":-18},{"gamma":1}]},
+      {"featureType":"water","elementType":"all","stylers":[{"hue":"#00FFA6"},{"saturation":-63.2},{"lightness":38},{"gamma":1}]},
+      {"featureType":"water","elementType":"geometry.fill","stylers":[{"visibility":"on"},{"color":"#ffe59c"}]}],
+      {name: "Western"})
+    .styledmaptype(
+      "Sci-Fi",
+      [{"featureType":"all","elementType":"labels.text.fill","stylers":[{"color":"#ffffff"}]},
+      {"featureType":"all","elementType":"labels.text.stroke","stylers":[{"color":"#000000"},{"lightness":13}]},
+      {"featureType":"administrative","elementType":"geometry.fill","stylers":[{"color":"#000000"}]},{"featureType":"administrative","elementType":"geometry.stroke","stylers":[{"color":"#144b53"},{"lightness":14},{"weight":1.4}]},
+      {"featureType":"landscape","elementType":"all","stylers":[{"color":"#08304b"}]},
+      {"featureType":"poi","elementType":"geometry","stylers":[{"color":"#0c4152"},{"lightness":5}]},
+      {"featureType":"road.highway","elementType":"geometry.fill","stylers":[{"color":"#000000"}]},
+      {"featureType":"road.highway","elementType":"geometry.stroke","stylers":[{"color":"#0b434f"},{"lightness":25}]},
+      {"featureType":"road.arterial","elementType":"geometry.fill","stylers":[{"color":"#000000"}]},{"featureType":"road.arterial","elementType":"geometry.stroke","stylers":[{"color":"#0b3d51"},{"lightness":16}]},
+      {"featureType":"road.local","elementType":"geometry","stylers":[{"color":"#000000"}]},
+      {"featureType":"transit","elementType":"all","stylers":[{"color":"#146474"}]},
+      {"featureType":"water","elementType":"all","stylers":[{"color":"#021019"}]}],
+      {name: "Sci-Fi"})
+    .infowindow({
+      content: ""
+    })
+
+
     // test marker
 
     // .marker({
