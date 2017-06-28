@@ -17,19 +17,31 @@ h1 {
 
 #iw-address {
    color: white;
-   /*background-color: grey;*/
+   width: fit-content;
    text-shadow: 2px 2px 2px #000000;
-   font-size: 25px;
+   /*font-size: 25px;*/
    font-weight: bolder;
    padding: 5px;
 }
 
+#iw-address span {
+   background-color: #bebebe;
+   opacity: 0.8;
+}
+
 #iw-remarks {
    color: white;
+   width: fit-content;
    text-shadow: 2px 2px 2px #000000;
-   font-size: 20px;
+   /*font-size: 20px;*/
    font-weight: bolder;
-   padding: 5px;
+   padding-left: 5px;
+   padding-right: 5px;
+}
+
+#iw-remarks span {
+   background-color: #bebebe;
+   opacity: 0.8;
 }
 
 .map-container {
@@ -52,8 +64,6 @@ h1 {
 #panel {
    height: 80%;
    margin-top: 115px;;
-   /*background: #e2e2e2;
-   opacity: 0.9;*/
    float: left;
    width: 250px;
    max-width: 250px;
@@ -86,7 +96,6 @@ h1 {
    width: fit-content;
    border: 1px solid grey;
    border-radius: 5px;
-   /*margin: auto;*/
    margin-top: 5px;
    padding: 3px;
 }
@@ -106,15 +115,12 @@ h1 {
 
 #search-options {
    position: absolute;
-   /*margin-left: 10px;*/
-   /*padding-top: 50px;*/
-   /*height: auto;*/
    margin-top: 65px;
    z-index: 3;
 }
 
 #search-term {
-   /*margin-left: 5px;*/
+
 }
 
 #poster {
@@ -124,20 +130,6 @@ h1 {
    border: 1px solid grey;
    border-radius: 5px;
 }
-
-
-/*#click {
-   height: auto;
-   width: auto;
-   background: grey;
-   float: left;
-   margin-top: 0px;
-   z-index: 1;
-   display: block;
-   position: absolute;
-   left: 0;
-   opacity: 0.9;
-}*/
 
 .map-canvas-container {
    overflow:hidden;
@@ -194,7 +186,3 @@ h1 {
 ::-webkit-scrollbar-corner {
   background: transparent;
 }
-
-/*#front-page {
-margin: 0 auto;
-}*/

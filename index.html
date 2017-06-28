@@ -27,11 +27,8 @@
   <body>
 
     <div class="container-fluid map-container">
-        <!-- <div id="panel-container"> -->
       <div id="search-container">
-
         <h1 style="background-color:white; border:1px solid grey;border-radius:5px;padding:3px;">onLocation</h1>
-        <!-- <br><br><br> -->
         <div id="search-options">
           <div class="ui-widget">
             <input type="text" class="ui-autocomplete-input form-control" name="title" id="search-term" placeholder="Enter a movie title" autocomplete="off"/>
@@ -46,29 +43,23 @@
         </div>
       </div>
 
-      <!-- </div> -->
-
       <div class="map-canvas-container">
-        <!-- <div id="map-canvas"> -->
         <div class="map" id="gmap3"></div>
-        <!-- </div> -->
       </div>
     </div>
 
-      <!-- TODO write a jquery function to eliminate duplication of search html, OR toggle css to use original header as front page -->
-    <section id="front-page" hidden>
+    <!-- <section id="front-page" hidden>
       <div>
         <h1>onLocation</h1>
         <h5>A thing that does stuff</h5>
       </div>
-    </section>
+    </section> -->
 
     <!-- Gmap3 -->
     <script type="text/javascript" src="js/gmap3.min.js"></script>
 
     <!-- script -->
     <script src="js/moviemap.js"></script>
-    <!-- <script src="js/test.js"></script> -->
 
   </body>
 </html>

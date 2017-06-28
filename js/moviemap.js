@@ -51,8 +51,6 @@ function getCoordinates(loc) {
     // TODO async:false is deprecated
     async: false,
     success: function(response) {
-      console.log(response.results);
-      console.log(response.results[0].geometry.location);
       var isRealLocation = (response.results.length > 0);
       if (!isRealLocation) {
         console.log("not real");
@@ -70,8 +68,6 @@ function getCoordinates(loc) {
             fillOpacity: 1
           }
         });
-
-        console.log(model.markerArray);
       }
     },
     error: function(err) {
@@ -79,14 +75,6 @@ function getCoordinates(loc) {
     }
   });
 }
-
-
-// function streetView(loc) {
-//   var streetViewUrl = 'https://maps.googleapis.com/maps/api/streetview?size=200x100&location=' + loc;
-//   return streetViewUrl;
-//   var streetViewContainer = $('<img src="' + streetViewUrl + '"/>');
-//   return streetViewContainer;
-// };
 
 
 function getShootingLocations() {
@@ -100,6 +88,7 @@ function getShootingLocations() {
     },
     success: function(response) {
       var movie = response.data.movies[0];
+      console.log(response);
       if (movie.filmingLocations !== undefined) {
         movie.filmingLocations.forEach( function(index) {
           if (index.remarks) {
@@ -108,7 +97,6 @@ function getShootingLocations() {
             model.locationInfo.push({address: index.location, remarks: ""});
           }
         });
-
 
         $("#gmap3")
           .gmap3({
@@ -141,7 +129,6 @@ function getShootingLocations() {
             });
 
             model.markers.forEach(function(marker) {
-              console.log(marker);
 
               marker.addListener('click', function() {
 
@@ -150,17 +137,16 @@ function getShootingLocations() {
                     model.activeWindow.close();
                   }
                   if (locationObj.address === marker.title) {
-                    // var streetViewImg = streetView(locationObj.address);
+
                     var streetViewUrl = 'https://maps.googleapis.com/maps/api/streetview?size=350x200&location=' + locationObj.address;
 
-                    var address = $("<p id='iw-address'></p>").text(locationObj.address);
+                    var address = $("<h3 id='iw-address'></h3>").html("<span>" + locationObj.address + "</span>");
 
-                    var remarks = $("<p id='iw-remarks'></p>").text(locationObj.remarks);
+                    var remarks = $("<h5 id='iw-remarks'></h5>").html("<span>" + locationObj.remarks + "</span>");
 
                     var locationWinContent = $("<div id=location-div></div>")
                       .css("background-image", "url('" + streetViewUrl + "')")
                       .append([address, remarks]);
-                    console.log(locationWinContent);
 
                     infowindow.setContent(locationWinContent[0]);
                     model.activeWindow = infowindow;
@@ -173,8 +159,6 @@ function getShootingLocations() {
               });
             });
           })
-          // .wait(2000)
-          // .fit()
       } else {
         console.log("No locations");
       }
@@ -247,17 +231,17 @@ function initMap() {
     .gmap3({
       address: model.currentLocation,
       zoom: model.zoom,
-      mapTypeId: "Default",
+      mapTypeId: "Default Theme",
       mapTypeControl: true,
       mapTypeControlOptions: {
-        mapTypeIds: ["Default", "Noir", "Western", "Sci-Fi"],
-        style: google.maps.MapTypeControlStyle.HORIZONTAL_BAR,
-        position: google.maps.ControlPosition.TOP_CENTER
+        mapTypeIds: ["Default Theme", "Noir", "Western", "Sci-Fi"],
+        style: google.maps.MapTypeControlStyle.DROPDOWN_MENU,
+        position: google.maps.ControlPosition.TOP_RIGHT
       },
       streetViewControl: false
     })
     .styledmaptype(
-      "Default",
+      "Default Theme",
       [{"featureType": "administrative","elementType": "labels.text.fill","stylers": [{"color": "#444444"}]},
       {"featureType": "landscape","elementType": "all","stylers": [{"color": "#f2f2f2"}]},
       {"featureType": "poi","elementType": "all","stylers": [{"visibility": "off"}]},
@@ -266,7 +250,7 @@ function initMap() {
       {"featureType": "road.arterial","elementType": "labels.icon","stylers": [{"visibility": "off"}]},
       {"featureType": "transit","elementType": "all","stylers": [{"visibility": "off"}]},
       {"featureType": "water","elementType": "all","stylers": [{"color": "#46bcec"},{"visibility": "on"}]}],
-      {name: "Default"})
+      {name: "Default Theme"})
     .styledmaptype(
       "Noir",
       [{"featureType":"all","elementType":"all","stylers":[{"hue":"#ff0000"},{"saturation":-100},{"lightness":-30}]},
@@ -305,24 +289,8 @@ function initMap() {
     .infowindow({
       content: ""
     })
-
-
-    // test marker
-
-    // .marker({
-    //   address: "chicago",
-    //   icon: {
-    //     path: fontawesome.markers.VIDEO_CAMERA,
-    //     scale: 0.35,
-    //     strokeWeight: 1,
-    //     strokeColor: "black",
-    //     fillColor: "#b60f0f",
-    //     fillOpacity: 1
-    //   }
-    // })
 };
 
-// DOM Event Handlers
 
 function search() {
 
