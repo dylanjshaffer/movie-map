@@ -140,9 +140,9 @@ function getShootingLocations() {
 
                     var streetViewUrl = 'https://maps.googleapis.com/maps/api/streetview?size=350x200&location=' + locationObj.address;
 
-                    var address = $("<h3 id='iw-address'></h3>").html("<span>" + locationObj.address + "</span>");
+                    var address = $("<h4 id='iw-address'></h4>").html("<span>" + locationObj.address + "</span>");
 
-                    var remarks = $("<h5 id='iw-remarks'></h5>").html("<span>" + locationObj.remarks + "</span>");
+                    var remarks = $("<h6 id='iw-remarks'></h6>").html("<span>" + locationObj.remarks + "</span>");
 
                     var locationWinContent = $("<div id=location-div></div>")
                       .css("background-image", "url('" + streetViewUrl + "')")
@@ -206,12 +206,12 @@ function fetchMovie() {
         .attr("id", "title-bar")
         .append([title, year])
 
-      var sidebarView = $("<div></div>")
-        .append([poster, titleBar, overview]);
+      $("#logo").css("background-image", "url(" + tmdbApi.posterUrl(response) + ")");
+      $("#movie-info").append([titleBar, overview]);
+
 
               // TODO checkout bootstrap panels
 
-      $("#movie-info").append(sidebarView);
       $("#panel").slideDown(250);
 
 

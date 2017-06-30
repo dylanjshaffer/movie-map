@@ -5,9 +5,42 @@ html, body {
 }
 
 h1 {
+   color: white;
+   opacity: 0.4;
+   float: left;
+   margin-bottom: 1px;
+}
+
+#logo {
+   background-color: grey;
+   background-image: url("http://image.tmdb.org/t/p/w300//iSi3OJKSPNknaxSvjpOa6c38Xgn.jpg");
+   background-size: contain;
+   border: 1px solid grey;
+   border-radius: 5px;
+   padding: 3px 3px 1px 3px;
    position: absolute;
    margin-top: 5px;
    z-index: 3;
+   width: fit-content;
+   height: 100px;
+}
+
+#search-options {
+   position: absolute;
+   margin-top: 105px;
+   z-index: 3;
+}
+
+#search-term {
+
+}
+
+#poster {
+   margin: auto;
+   width: 100%;
+   margin-bottom: 10px;
+   border: 1px solid grey;
+   border-radius: 5px;
 }
 
 #location-div {
@@ -16,23 +49,25 @@ h1 {
 }
 
 #iw-address {
-   color: white;
+   color: black;
    width: fit-content;
-   text-shadow: 2px 2px 2px #000000;
+   /*text-shadow: 2px 2px 2px #000000;*/
    /*font-size: 25px;*/
    font-weight: bolder;
    padding: 5px;
 }
 
 #iw-address span {
-   background-color: #bebebe;
-   opacity: 0.8;
+   background-color: white;
+   padding-left: 3px;
+   padding-right: 3px;
+   line-height: 90%;
 }
 
 #iw-remarks {
-   color: white;
+   color: black;
    width: fit-content;
-   text-shadow: 2px 2px 2px #000000;
+   /*text-shadow: 2px 2px 2px #000000;*/
    /*font-size: 20px;*/
    font-weight: bolder;
    padding-left: 5px;
@@ -40,15 +75,10 @@ h1 {
 }
 
 #iw-remarks span {
-   background-color: #bebebe;
-   opacity: 0.8;
+   background-color: white;
+   line-height: 90%;
 }
 
-.map-container {
-   position: relative;
-   top: 0;
-   height: 100%;
-}
 
 .gm-style-iw {
    width: 350px !important;
@@ -57,7 +87,7 @@ h1 {
    left: 0 !important;
    background-color: #fff;
    box-shadow: 0 1px 6px rgba(178,178,178,0.6);
-   border: 1px solid rgba(72,181,233,0.6);
+   border: 1px solid grey;
    border-radius: 3px 3px 3px 3px;
 }
 
@@ -113,25 +143,8 @@ h1 {
    padding: 3px;
 }
 
-#search-options {
-   position: absolute;
-   margin-top: 65px;
-   z-index: 3;
-}
 
-#search-term {
-
-}
-
-#poster {
-   margin: auto;
-   width: 100%;
-   margin-bottom: 10px;
-   border: 1px solid grey;
-   border-radius: 5px;
-}
-
-.map-canvas-container {
+.map-canvas {
    overflow:hidden;
    width: 100%;
    height:100%;
@@ -186,3 +199,9 @@ h1 {
 ::-webkit-scrollbar-corner {
   background: transparent;
 }
+
+/*.map-container {
+position: relative;
+top: 0;
+height: 100%;
+}*/
