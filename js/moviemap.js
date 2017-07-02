@@ -138,11 +138,11 @@ function getShootingLocations() {
                   }
                   if (locationObj.address === marker.title) {
 
-                    var streetViewUrl = 'https://maps.googleapis.com/maps/api/streetview?size=350x200&location=' + locationObj.address;
+                    var streetViewUrl = 'https://maps.googleapis.com/maps/api/streetview?size=300x150&location=' + locationObj.address;
 
-                    var address = $("<h4 id='iw-address'></h4>").html("<span>" + locationObj.address + "</span>");
+                    var address = $("<h5 id='iw-address'></h5>").html("<span>" + locationObj.address + "</span>");
 
-                    var remarks = $("<h6 id='iw-remarks'></h6>").html("<span>" + locationObj.remarks + "</span>");
+                    var remarks = $("<p id='iw-remarks'></p>").html("<span>" + locationObj.remarks + "</span>");
 
                     var locationWinContent = $("<div id=location-div></div>")
                       .css("background-image", "url('" + streetViewUrl + "')")
@@ -150,6 +150,7 @@ function getShootingLocations() {
 
                     infowindow.setContent(locationWinContent[0]);
                     model.activeWindow = infowindow;
+                    map.setCenter(infowindow);
                   }
                   infowindow.open(map, marker);
                   map.addListener('click', function() {
@@ -195,19 +196,10 @@ function fetchMovie() {
         poster = $("<p>No poster to display</p>");
       }
 
-
-      var year = $("<h6 id='panel-year'></h6>").text(response.release_date.slice(0, 4));
-
-      var title = $("<h6 id='panel-title'></h6>").text(response.title.toUpperCase());
-
       var overview = $("<p id='panel-overview'></p>").text(response.overview);
 
-      var titleBar = $("<div></div>")
-        .attr("id", "title-bar")
-        .append([title, year])
-
-      $("#logo").css("background-image", "url(" + tmdbApi.posterUrl(response) + ")");
-      $("#movie-info").append([titleBar, overview]);
+      $("#bg-img").attr("src", tmdbApi.posterUrl(response));
+      $("#movie-info").append(overview);
 
 
               // TODO checkout bootstrap panels
@@ -235,8 +227,8 @@ function initMap() {
       mapTypeControl: true,
       mapTypeControlOptions: {
         mapTypeIds: ["Default Theme", "Noir", "Western", "Sci-Fi"],
-        style: google.maps.MapTypeControlStyle.DROPDOWN_MENU,
-        position: google.maps.ControlPosition.TOP_RIGHT
+        style: google.maps.MapTypeControlStyle.HORIZONTAL_BAR,
+        position: google.maps.ControlPosition.BOTTOM_CENTER
       },
       streetViewControl: false
     })
@@ -296,9 +288,9 @@ function search() {
 
   var titleList;
 
-  // $("#search-options").click(function(){
-  //   $("#panel").slideToggle(250);
-  // });
+  $("#panel").click(function(){
+    $("#panel-overview").slideToggle(250);
+  });
 
   $("#search-term").autocomplete({
     source: function(request, response) {
@@ -307,7 +299,8 @@ function search() {
         data: {
           query: request.term,
           api_key: tmdbApi.token,
-          include_adult: false
+          include_adult: false,
+          results: 5
         },
         success: function(respObj) {
           titleList=[];
