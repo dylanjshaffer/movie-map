@@ -29,22 +29,30 @@
 
     <div class="container-fluid map-container">
       <div class="row" id="header">
-        <div id="logo">
-          <img id="bg-img" src="http://image.tmdb.org/t/p/w300//iSi3OJKSPNknaxSvjpOa6c38Xgn.jpg"/>
-          <h2>onLocation</h2>
-        </div>
+        <div class="col-xs-12 col-sm-5 col-md-5">
+          <div id="logo-container">
+            <div id="logo">
+              <img class="img-responsive" id="bg-img" src="http://cdn.moviestillsdb.com/sm/8b94fd83be4ff4947e0ad4ac69720cd3/star-wars.jpg"/>
+              <h2>onLocation</h2>
+            </div>
 
-        <div id="search-options">
-          <div class="ui-widget">
-            <input type="text" class="ui-autocomplete-input form-control" name="title" id="search-term" placeholder="Enter a movie title..." autocomplete="off"/>
-          </div>
-          <div class="ui-widget" style="margin-top:2em; font-family:Arial">
+            <div id="search-options">
+              <div class="ui-widget">
+                <input type="text" class="ui-autocomplete-input form-control" name="title" id="search-term" placeholder="Enter a movie title..." autocomplete="off"/>
+              </div>
+              <div class="ui-widget" style="margin-top:2em; font-family:Arial">
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-      <div id="panel">
-        <div id="floating-panel">
-          <div id=movie-info></div>
+        <div class="col-xs-12 col-sm-5 col-md-5 container fluid">
+
+          <div id="panel">
+            <!-- <div id="floating-panel"> -->
+            <div id=movie-info></div>
+            <button id='close-button' class='btn btn-block btn-xs'>close</button>
+            <!-- </div> -->
+          </div>
         </div>
       </div>
 

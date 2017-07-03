@@ -2,7 +2,7 @@
 // MODEL
 
 var model = {
-  zoom: 4,
+  zoom: 3,
   activeWindow: null,
   imdbID: "",
   tmdbID: "",
@@ -206,7 +206,6 @@ function fetchMovie() {
 
       $("#panel").slideDown(250);
 
-
     },
     error: function(err) {
       console.log(err);
@@ -223,17 +222,21 @@ function initMap() {
     .gmap3({
       address: model.currentLocation,
       zoom: model.zoom,
-      mapTypeId: "Default Theme",
+      mapTypeId: "Default",
       mapTypeControl: true,
       mapTypeControlOptions: {
-        mapTypeIds: ["Default Theme", "Noir", "Western", "Sci-Fi"],
-        style: google.maps.MapTypeControlStyle.HORIZONTAL_BAR,
+        mapTypeIds: ["Default", "Noir", "Western", "Sci-Fi"],
+        style: google.maps.MapTypeControlStyle.DEFAULT,
         position: google.maps.ControlPosition.BOTTOM_CENTER
       },
-      streetViewControl: false
+      streetViewControl: false,
+      zoomControl: true,
+      zoomControlOptions: {
+        position: google.maps.ControlPosition.RIGHT_CENTER
+      },
     })
     .styledmaptype(
-      "Default Theme",
+      "Default",
       [{"featureType": "administrative","elementType": "labels.text.fill","stylers": [{"color": "#444444"}]},
       {"featureType": "landscape","elementType": "all","stylers": [{"color": "#f2f2f2"}]},
       {"featureType": "poi","elementType": "all","stylers": [{"visibility": "off"}]},
@@ -242,7 +245,7 @@ function initMap() {
       {"featureType": "road.arterial","elementType": "labels.icon","stylers": [{"visibility": "off"}]},
       {"featureType": "transit","elementType": "all","stylers": [{"visibility": "off"}]},
       {"featureType": "water","elementType": "all","stylers": [{"color": "#46bcec"},{"visibility": "on"}]}],
-      {name: "Default Theme"})
+      {name: "Default"})
     .styledmaptype(
       "Noir",
       [{"featureType":"all","elementType":"all","stylers":[{"hue":"#ff0000"},{"saturation":-100},{"lightness":-30}]},
@@ -288,8 +291,8 @@ function search() {
 
   var titleList;
 
-  $("#panel").click(function(){
-    $("#panel-overview").slideToggle(250);
+  $("#close-button").click(function(){
+    $("#panel").slideToggle(250);
   });
 
   $("#search-term").autocomplete({
