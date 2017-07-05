@@ -24,7 +24,7 @@ overflow: hidden;
 
 #logo {
    background-color: grey;
-   border-radius: 5px 5px 0 0;
+   border-radius: 3px 3px 0 0;
    position: relative;
    width: inherit;
    height: 95px;
@@ -35,7 +35,7 @@ overflow: hidden;
    height: inherit;
    width: inherit;
    border: 1px solid grey;
-   border-radius: 5px 5px 0 0;
+   border-radius: 3px 3px 0 0;
    object-fit: cover;
    object-position: top;
 }
@@ -53,7 +53,6 @@ overflow: hidden;
 .ui-widget {
    width: 225px;
    overflow: hide;
-
 }
 
 #search-options {
@@ -64,15 +63,22 @@ overflow: hidden;
 
 #search-term {
    margin-top: 0;
+   font-size: 1em;
    padding: 0.5px;
    padding-left: 2px;
    border: 1px solid grey;
-   border-radius: 0 0 5px 5px;
+   border-radius: 0 0 3px 3px;
 }
 
-#location-div {
-    height: 150px;
-    width: 300px;
+
+
+#error {
+   position: relative;
+   text-align: center;
+   font-weight: bolder;
+   padding: 0;
+   color: red;
+   z-index: 100;
 }
 
 #iw-address {
@@ -84,8 +90,7 @@ overflow: hidden;
 
 #iw-address span {
    background-color: white;
-   padding-left: 3px;
-   padding-right: 3px;
+   opacity: 0.7;
 }
 
 #iw-remarks {
@@ -98,18 +103,25 @@ overflow: hidden;
 
 #iw-remarks span {
    background-color: white;
+   opacity: 0.7;
 }
 
-
 .gm-style-iw {
-   width: 300px !important;
-   height: 150px;
+   width: 225px !important;
+   height: 125px !important;
    top: 15px !important;
    left: 0 !important;
    background-color: #fff;
-   box-shadow: 0 1px 6px rgba(178,178,178,0.6);
+   box-shadow: 0 1px 3px #b3b3b3;
    border: 1px solid grey;
    border-radius: 3px 3px 3px 3px;
+   padding-right: 0;
+}
+
+#location-div {
+   width: 225px;
+   height: 125px;
+   background-size: contain;
 }
 
 #panel {
@@ -117,31 +129,56 @@ overflow: hidden;
    float: left;
    left: 0;
    max-height: 118px;
-   width: 225px;
+   /*width: 225px;*/
    overflow: auto;
    position: relative;
    z-index: 5;
    background-color: white;
    opacity: 0.9;
    border: 1px solid grey;
-   border-radius: 5px;
+   border-radius: 3px;
+}
+
+#panel-title {
+   text-align: center;
+   font-weight: bold;
+   margin-bottom: 0;
+}
+
+#panel-year {
+   text-align: center;
+   margin-bottom: 0;
+   font-size: .9em;
+}
+
+hr {
+   margin: 0;
 }
 
 #panel-overview {
    text-align: justify;
-   margin-right: 7px;
+   /*margin-right: 7px;*/
    font-size: .9em;
    line-height: 100%;
-   width: inherit;
+   /*width: inherit;*/
    height: inherit;
    padding: 3px;
    z-index: 5;
 }
 
 .btn {
-   line-height: 100%;
-   position: relative;
+   display: none;
+   background-color: Transparent;
+   border-radius: 0 3px 3px 0;
+   outline: none;
+   opacity: 0.9;
+   padding: 0 3px 2px 3px;
+   color: grey;
+   font-weight: bolder;
+   line-height: 90%;
+   position: absolute;
    margin-top: 0;
+   z-index: 5;
 }
 .map-canvas {
    overflow:hidden;
@@ -154,7 +191,7 @@ overflow: hidden;
 #gmap3 {
    padding: 0;
    position: absolute !important;
-   background: grey;
+   background: #2b2b2b;
    top: 0px;
    right: 0;
    bottom: 0 !important;

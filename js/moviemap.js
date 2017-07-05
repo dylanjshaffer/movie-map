@@ -89,7 +89,8 @@ function getShootingLocations() {
     success: function(response) {
       var movie = response.data.movies[0];
       console.log(response);
-      if (movie.filmingLocations !== undefined) {
+
+      if (movie.filmingLocations !== undefined && movie.filmingLocations !== null) {
         movie.filmingLocations.forEach( function(index) {
           if (index.remarks) {
             model.locationInfo.push({address: index.location, remarks: index.remarks});
@@ -123,7 +124,7 @@ function getShootingLocations() {
               var iwBackground = iwOuter.prev();
               iwBackground.children(':nth-child(2)').css({'display':'none'});
               iwBackground.children(':nth-child(4)').css({'display':'none'});
-              iwBackground.children(':nth-child(3)').find('div').children().css({'box-shadow': 'rgba(72, 181, 233, 0.6) 0px 1px 6px', 'z-index':'1'});
+              iwBackground.children(':nth-child(3)').find('div').children().css({'box-shadow': '#b3b3b3 0px 1px 6px', 'z-index':'1'});
               var iwCloseBtn = iwOuter.next();
               iwCloseBtn.css({"display":"none"});
             });
@@ -138,9 +139,11 @@ function getShootingLocations() {
                   }
                   if (locationObj.address === marker.title) {
 
-                    var streetViewUrl = 'https://maps.googleapis.com/maps/api/streetview?size=300x150&location=' + locationObj.address;
+                    var streetViewUrl = 'https://maps.googleapis.com/maps/api/streetview?size=225x125&location=' + locationObj.address;
 
-                    var address = $("<h5 id='iw-address'></h5>").html("<span>" + locationObj.address + "</span>");
+                    // var streetViewImg = "url('" + streetViewUrl + "')";
+
+                    var address = $("<h6 id='iw-address'></h6>").html("<span>" + locationObj.address + "</span>");
 
                     var remarks = $("<p id='iw-remarks'></p>").html("<span>" + locationObj.remarks + "</span>");
 
@@ -150,7 +153,7 @@ function getShootingLocations() {
 
                     infowindow.setContent(locationWinContent[0]);
                     model.activeWindow = infowindow;
-                    map.setCenter(infowindow);
+                    map.setCenter(marker);
                   }
                   infowindow.open(map, marker);
                   map.addListener('click', function() {
@@ -162,10 +165,12 @@ function getShootingLocations() {
           })
       } else {
         console.log("No locations");
+        $("#error").html("<p>No locations found</p>");
       }
     },
     error: function(err) {
       console.log(err);
+      $("#error").html("<p>No locations found</p>");
     }
   });
 };
@@ -186,25 +191,34 @@ function fetchMovie() {
       api_key: tmdbApi.token
     },
     success: function(response) {
-      model.imdbID = response.imdb_id;
-      getShootingLocations();
-      var poster;
-      if (response.poster_path != null) {
-        poster = $("<img id='poster'></img>")
-          .attr("src", tmdbApi.posterUrl(response))
+      if (response.imdb_id) {
+        model.imdbID = response.imdb_id;
+        getShootingLocations();
       } else {
-        poster = $("<p>No poster to display</p>");
+        model.markers = [];
+        $("#error").html("<p>No locations found</p>");
+      }
+      var poster;
+      if (response.backdrop_path != null) {
+        $("#bg-img").attr("src", tmdbApi.posterUrl(response));
+      } else {
+        $("#bg-img").attr("src", "http://cdn.moviestillsdb.com/sm/8b94fd83be4ff4947e0ad4ac69720cd3/star-wars.jpg")
       }
 
+      var title = $("<h6 id='panel-title'></h6>").text(response.title);
+      var year = $("<p id='panel-year'></p>").text(response.release_date.slice(0, 4));
       var overview = $("<p id='panel-overview'></p>").text(response.overview);
 
-      $("#bg-img").attr("src", tmdbApi.posterUrl(response));
-      $("#movie-info").append(overview);
+
+      $("#movie-info").append([title, year, "<hr>", overview]);
 
 
-              // TODO checkout bootstrap panels
+      // TODO checkout bootstrap panels
 
       $("#panel").slideDown(250);
+      $(".btn").show();
+
+
 
     },
     error: function(err) {
@@ -293,6 +307,7 @@ function search() {
 
   $("#close-button").click(function(){
     $("#panel").slideToggle(250);
+    $("#close-button").hide();
   });
 
   $("#search-term").autocomplete({
@@ -302,8 +317,7 @@ function search() {
         data: {
           query: request.term,
           api_key: tmdbApi.token,
-          include_adult: false,
-          results: 5
+          include_adult: false
         },
         success: function(respObj) {
           titleList=[];
@@ -326,8 +340,10 @@ function search() {
     autoFocus: true,
     select: function(event, ui) {
       event.preventDefault();
-      $("#search-term").val(ui.item.label);
+      $("#search-term").val("");
       model.currentFilm = ui.item.value;
+
+      $("#error").empty();
 
       fetchMovie();
     }

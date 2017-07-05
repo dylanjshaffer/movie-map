@@ -38,21 +38,20 @@
 
             <div id="search-options">
               <div class="ui-widget">
-                <input type="text" class="ui-autocomplete-input form-control" name="title" id="search-term" placeholder="Enter a movie title..." autocomplete="off"/>
+                <input type="text" class="ui-autocomplete-input form-control" name="title" id="search-term" placeholder="Enter a movie title..." autocomplete="off" autofocus="on"/>
               </div>
               <div class="ui-widget" style="margin-top:2em; font-family:Arial">
               </div>
             </div>
           </div>
+          <div id="error"></div>
         </div>
-        <div class="col-xs-12 col-sm-5 col-md-5 container fluid">
+        <div class="col-xs-12 col-sm-5 col-md-5 container fluid" id=>
 
           <div id="panel">
-            <!-- <div id="floating-panel"> -->
             <div id=movie-info></div>
-            <button id='close-button' class='btn btn-block btn-xs'>close</button>
-            <!-- </div> -->
           </div>
+          <button id='close-button' class='btn btn-default btn-xs'>x</button>
         </div>
       </div>
 
